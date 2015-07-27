@@ -85,9 +85,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ClimateVariableDefinition.cs" />
-    <Compile Include="SpeciesMapFileNames.cs" />
     <Compile Include="NeighborVariableDefinition.cs" />
     <Compile Include="ModelDefinition.cs" />
+    <Compile Include="SpeciesHabitatLog.cs" />
     <Compile Include="VariableDefinition.cs" />
     <Compile Include="MapDefinition.cs" />
     <Compile Include="MapFileNames.cs" />

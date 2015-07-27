@@ -14,14 +14,17 @@ namespace Landis.Extension.Output.BirdHabitat
         [DataFieldAttribute(Desc = "Ecoregion Name")]
         public string Ecoregion { set; get; }
 
-        [DataFieldAttribute(Desc = "Ecoregion Index")]
-        public int EcoregionIndex { set; get; }
+        [DataFieldAttribute(Desc = "Species Name")]
+        public string SpeciesName { set; get; }
 
-        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Sites")]
-        public int NumSites { set; get; }
+        //[DataFieldAttribute(Desc = "Ecoregion Index")]
+        //public int EcoregionIndex { set; get; }
 
-        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Species Abundance", Format = "0.00", SppList = true)]
-        public Dictionary<string, float>[] SppHabitat { set; get; }
+        //[DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Sites")]
+        //public int NumSites { set; get; }
+
+        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Species Abundance", Format = "0.00")]
+        public double SppHabitat { set; get; }
 
     }
 }

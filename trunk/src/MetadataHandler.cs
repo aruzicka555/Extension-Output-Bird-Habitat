@@ -29,7 +29,7 @@ namespace Landis.Extension.Output.BirdHabitat
                 ScenarioReplicationMetadata = scenRep
             };
 
-            /*
+            
             //---------------------------------------
             //          table outputs:   
             //---------------------------------------
@@ -43,7 +43,7 @@ namespace Landis.Extension.Output.BirdHabitat
             };
             tblOut_events.RetriveFields(typeof(SpeciesHabitatLog));
             Extension.OutputMetadatas.Add(tblOut_events);
-            */
+            
 
             //---------------------------------------            
             //          map outputs:         
@@ -52,11 +52,14 @@ namespace Landis.Extension.Output.BirdHabitat
             foreach (ModelDefinition sppModel in modelDefs)
             {
                 
+                string sppMapPath = MapFileNames.ReplaceTemplateVars(MapFileName, sppModel.Name);
+                
                 OutputMetadata mapOut_Birds = new OutputMetadata()
                 {
                     Type = OutputType.Map,
-                    Name = sppModel.Name,
-                    FilePath = @MapFileName,
+                    Name = ("Species Habitat Map: " + sppModel.Name),
+                    //sppModel.Name,
+                    FilePath = @sppMapPath,
                     Map_DataType = MapDataType.Continuous,
                     //Map_Unit = FieldUnits.Severity_Rank,
                     Visualize = true,

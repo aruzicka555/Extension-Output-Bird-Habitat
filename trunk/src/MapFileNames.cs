@@ -13,7 +13,7 @@ namespace Landis.Extension.Output.BirdHabitat
     /// </summary>
     public static class MapFileNames
     {
-        public const string MapNameVar = "reclass-map-name";
+        public const string HabitatVar = "habitat-map-name";
         public const string TimestepVar = "timestep";
 
 
@@ -25,7 +25,7 @@ namespace Landis.Extension.Output.BirdHabitat
         static MapFileNames()
         {
             knownVars = new Dictionary<string, bool>();
-            knownVars[MapNameVar] = true;
+            knownVars[HabitatVar] = true;
             knownVars[TimestepVar] = true;
 
             varValues = new Dictionary<string, string>();
@@ -41,14 +41,22 @@ namespace Landis.Extension.Output.BirdHabitat
         //---------------------------------------------------------------------
 
         public static string ReplaceTemplateVars(string template,
-                                                 string reclassMapName,
+                                                 string habitatMapName,
                                                  int    timestep)
         {
-            varValues[MapNameVar] = reclassMapName;
+            varValues[HabitatVar] = habitatMapName;
             varValues[TimestepVar] = timestep.ToString();
             return OutputPath.ReplaceTemplateVars(template, varValues);
         }
         //---------------------------------------------------------------------
+
+        public static string ReplaceTemplateVars(string template,
+                                                 string habitatMapName)
+        {
+            varValues[HabitatVar] = habitatMapName;
+            varValues[TimestepVar] = "{timestep}";
+            return OutputPath.ReplaceTemplateVars(template, varValues);
+        }
 
     }
 }

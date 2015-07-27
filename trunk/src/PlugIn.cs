@@ -22,8 +22,8 @@ namespace Landis.Extension.Output.BirdHabitat
 
         public static readonly ExtensionType extType = new ExtensionType("output");
         public static readonly string PlugInName = "Output Bird Habitat";
-        //public static MetadataTable<SpeciesHabitatLog> habitatLog;
-        private StreamWriter habitatLog;
+        public static MetadataTable<SpeciesHabitatLog> habitatLog;
+        //private StreamWriter habitatLog;
 
         private string localVarMapNameTemplate;
         private string speciesMapNameTemplate;
@@ -94,15 +94,15 @@ namespace Landis.Extension.Output.BirdHabitat
             if (parameters.SpeciesMapFileNames != null)
                 MetadataHandler.InitializeMetadata(parameters.Timestep, parameters.SpeciesMapFileNames, parameters.Models, ModelCore, parameters.LogFileName);
 
-            ModelCore.UI.WriteLine("   Opening species habitat log files \"{0}\" ...", parameters.LogFileName);
-            habitatLog = Landis.Data.CreateTextFile(parameters.LogFileName);
-            habitatLog.AutoFlush = true;
-            habitatLog.Write("Time, Species, Avg_Landscape");
-            foreach (IEcoregion ecoregion in PlugIn.ModelCore.Ecoregions)
-            {
-                habitatLog.Write(", Avg_{0}", ecoregion.Name);
-            }
-            habitatLog.WriteLine("");
+            //ModelCore.UI.WriteLine("   Opening species habitat log files \"{0}\" ...", parameters.LogFileName);
+            //habitatLog = Landis.Data.CreateTextFile(parameters.LogFileName);
+            //habitatLog.AutoFlush = true;
+            //habitatLog.Write("Time, Species, Avg_Landscape");
+            //foreach (IEcoregion ecoregion in PlugIn.ModelCore.Ecoregions)
+            //{
+            //    habitatLog.Write(", Avg_{0}", ecoregion.Name);
+            //}
+            //habitatLog.WriteLine("");
             
         }
 
@@ -571,34 +571,48 @@ namespace Landis.Extension.Output.BirdHabitat
             }
 
             
-            foreach (IModelDefinition model in modelDefs)
-            {
-                habitatLog.Write("{0},", ModelCore.CurrentTime);
-                habitatLog.Write("{0},", model.Name);
-                habitatLog.Write("{0}", landscapeAvgValues[model.Name]);
-                foreach (IEcoregion ecoregion in ModelCore.Ecoregions)
-                {
-                    habitatLog.Write(",{0}", ecoregionAvgValues[ecoregion.Index][model.Name]);
-                }
-                habitatLog.WriteLine("");
-            }
-            
+            //foreach (IModelDefinition model in modelDefs)
+            //{
+            //    habitatLog.Write("{0},", ModelCore.CurrentTime);
+            //    habitatLog.Write("{0},", model.Name);
+            //    habitatLog.Write("{0}", landscapeAvgValues[model.Name]);
+            //    foreach (IEcoregion ecoregion in ModelCore.Ecoregions)
+            //    {
+            //        habitatLog.Write(",{0}", ecoregionAvgValues[ecoregion.Index][model.Name]);
+            //    }
+            //    habitatLog.WriteLine("");
+            //}
 
-            /*
+
+            
              foreach (IModelDefinition model in modelDefs)
              {
+                 habitatLog.Clear();
+                 SpeciesHabitatLog shlog = new SpeciesHabitatLog();
+                 shlog.Time = ModelCore.CurrentTime;
+                 shlog.Ecoregion = "TotalLandscape";
+                 shlog.SpeciesName = model.Name;
+                 //shlog.NumSites = activeSiteCount[ecoregion.Index];
+                 shlog.SppHabitat = landscapeAvgValues[model.Name];
+                 habitatLog.AddObject(shlog);
+                 habitatLog.WriteToFile();
+
                  foreach (IEcoregion ecoregion in ModelCore.Ecoregions)
                  {
                      habitatLog.Clear();
-                     SpeciesHabitatLog shl = new SpeciesHabitatLog();
-                     shl.Time = ModelCore.CurrentTime;
-                     shl.Ecoregion = ecoregion.Name;
-                     shl.EcoregionIndex = ecoregion.Index;
-                     shl.NumSites = activeSiteCount[ecoregion.Index];
-                     //shl.SppHabitat[ecoregion.Index][model.Name] = avgHabitat[ecoregion.Index][;
+                     shlog = new SpeciesHabitatLog();
+                     shlog.Time = ModelCore.CurrentTime;
+                     shlog.Ecoregion = ecoregion.Name;
+                     shlog.SpeciesName = model.Name;
+                     //shl.EcoregionIndex = ecoregion.Index;
+                     //shlog.NumSites = activeSiteCount[ecoregion.Index];
+                     shlog.SppHabitat = ecoregionAvgValues[ecoregion.Index][model.Name];
+                     habitatLog.AddObject(shlog);
+                     habitatLog.WriteToFile();
+
                  }
              }
-             * */
+             
 
             // Ouput Maps
             if (!(parameters.LocalVarMapFileNames == null))
