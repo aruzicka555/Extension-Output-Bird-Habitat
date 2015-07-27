@@ -11,9 +11,9 @@ namespace Landis.Extension.Output.BirdHabitat
     /// <summary>
     /// Methods for working with the template for filenames of reclass maps.
     /// </summary>
-    public static class MapFileNames
+    public static class LocalMapFileNames
     {
-        public const string HabitatVar = "habitat-map-name";
+        public const string Variable = "local-var-name";
         public const string TimestepVar = "timestep";
 
 
@@ -22,10 +22,10 @@ namespace Landis.Extension.Output.BirdHabitat
 
         //---------------------------------------------------------------------
 
-        static MapFileNames()
+        static LocalMapFileNames()
         {
             knownVars = new Dictionary<string, bool>();
-            knownVars[HabitatVar] = true;
+            knownVars[Variable] = true;
             knownVars[TimestepVar] = true;
 
             varValues = new Dictionary<string, string>();
@@ -41,19 +41,19 @@ namespace Landis.Extension.Output.BirdHabitat
         //---------------------------------------------------------------------
 
         public static string ReplaceTemplateVars(string template,
-                                                 string habitatMapName,
+                                                 string localVarMapName,
                                                  int    timestep)
         {
-            varValues[HabitatVar] = habitatMapName;
+            varValues[Variable] = localVarMapName;
             varValues[TimestepVar] = timestep.ToString();
             return OutputPath.ReplaceTemplateVars(template, varValues);
         }
         //---------------------------------------------------------------------
 
         public static string ReplaceTemplateVars(string template,
-                                                 string habitatMapName)
+                                                 string localVarMapName)
         {
-            varValues[HabitatVar] = habitatMapName;
+            varValues[Variable] = localVarMapName;
             varValues[TimestepVar] = "{timestep}";
             return OutputPath.ReplaceTemplateVars(template, varValues);
         }

@@ -92,7 +92,7 @@
     <Compile Include="ModelDefinition.cs" />
     <Compile Include="VariableDefinition.cs" />
     <Compile Include="MapDefinition.cs" />
-    <Compile Include="MapFileNames.cs" />
+    <Compile Include="LocalMapFileNames.cs" />
     <Compile Include="PlugIn.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -5,6 +5,7 @@ using System.Text;
 using Landis.Library.Metadata;
 using Edu.Wisc.Forest.Flel.Util;
 using Landis.Core;
+using System.IO;
 
 namespace Landis.Extension.Output.BirdHabitat
 {
@@ -14,7 +15,7 @@ namespace Landis.Extension.Output.BirdHabitat
         
         public static ExtensionMetadata Extension {get; set;}
 
-        public static void InitializeMetadata(int Timestep, string MapFileName, IEnumerable<IModelDefinition> modelDefs, ICore mCore, string LogFileName)
+        public static void InitializeMetadata(int Timestep, string SpeciesMapFileName, IEnumerable<IModelDefinition> modelDefs, ICore mCore, string LogFileName)
         {
             ScenarioReplicationMetadata scenRep = new ScenarioReplicationMetadata() {
                 RasterOutCellArea = PlugIn.ModelCore.CellArea,
@@ -33,6 +34,7 @@ namespace Landis.Extension.Output.BirdHabitat
             //---------------------------------------
             //          table outputs:   
             //---------------------------------------
+            System.IO.Directory.CreateDirectory(Path.GetDirectoryName(LogFileName));
             PlugIn.habitatLog = new MetadataTable<SpeciesHabitatLog>(LogFileName);
             OutputMetadata tblOut_events = new OutputMetadata()
             {
@@ -52,7 +54,7 @@ namespace Landis.Extension.Output.BirdHabitat
             foreach (ModelDefinition sppModel in modelDefs)
             {
                 
-                string sppMapPath = MapFileNames.ReplaceTemplateVars(MapFileName, sppModel.Name);
+                string sppMapPath = SpeciesMapFileNames.ReplaceTemplateVars(SpeciesMapFileName, sppModel.Name);
                 
                 OutputMetadata mapOut_Birds = new OutputMetadata()
                 {

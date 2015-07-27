@@ -44,7 +44,15 @@ namespace Landis.Extension.Output.BirdHabitat
             varValues[TimestepVar] = timestep.ToString();
             return OutputPath.ReplaceTemplateVars(template, varValues);
         }
+        //---------------------------------------------------------------------
 
+        public static string ReplaceTemplateVars(string template,
+                                                 string speciesMapName)
+        {
+            varValues[SpeciesNameVar] = speciesMapName;
+            varValues[TimestepVar] = "{timestep}";
+            return OutputPath.ReplaceTemplateVars(template, varValues);
+        }
 
     
     }

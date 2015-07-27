@@ -115,7 +115,7 @@ namespace Landis.Extension.Output.BirdHabitat
                 return localVarMapFileNames;
             }
             set {
-                BirdHabitat.MapFileNames.CheckTemplateVars(value);
+                BirdHabitat.LocalMapFileNames.CheckTemplateVars(value);
                 localVarMapFileNames = value;
             }
         }

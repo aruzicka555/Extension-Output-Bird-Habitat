@@ -620,7 +620,7 @@ namespace Landis.Extension.Output.BirdHabitat
                 //----- Write LocalVar maps --------
                 foreach (MapDefinition localVar in parameters.ReclassMaps)
                 {
-                    string localVarPath = MapFileNames.ReplaceTemplateVars(parameters.LocalVarMapFileNames, localVar.Name, PlugIn.ModelCore.CurrentTime);
+                    string localVarPath = LocalMapFileNames.ReplaceTemplateVars(parameters.LocalVarMapFileNames, localVar.Name, PlugIn.ModelCore.CurrentTime);
                     using (IOutputRaster<BytePixel> outputRaster = modelCore.CreateRaster<BytePixel>(localVarPath, modelCore.Landscape.Dimensions))
                     {
                         BytePixel pixel = outputRaster.BufferPixel;
