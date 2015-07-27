@@ -53,6 +53,7 @@ namespace Landis.Extension.Output.BirdHabitat
             const string NeighborVarMapFileNames = "NeighborVarMapFileNames";
             const string ClimateVarMapFileNames = "ClimateVarMapFileNames";
             const string SpeciesMapFileName = "SpeciesMapFileNames";
+            const string LogFile = "LogFile";
 
             if (ReadOptionalName(LocalVariables))
             {
@@ -291,6 +292,7 @@ namespace Landis.Extension.Output.BirdHabitat
                 InputVar<string> varYear = new InputVar<string>("Variable Year");
                 InputVar<int> minMonth = new InputVar<int>("Min Month");
                 InputVar<int> maxMonth = new InputVar<int>("Max Month");
+                InputVar<string> transform = new InputVar<string>("Tranformation");
 
                 IClimateVariableDefinition climateVarDefn = null;
                 while (!AtEndOfInput  && (CurrentName != SpeciesModels))
@@ -329,10 +331,8 @@ namespace Landis.Extension.Output.BirdHabitat
                     ReadValue(climateLibraryVarName, currentLine);
                     climateVarDefn.ClimateLibVariable = climateLibraryVarName.Value;
 
-                    if(climateVarDefn.SourceName != "Library")
-                    {
-
-                    }
+                    ReadValue(transform, currentLine);
+                    climateVarDefn.Transform = transform.Value;
 
                     parameters.ClimateVars.Add(climateVarDefn);
                     GetNextLine();
@@ -436,7 +436,20 @@ namespace Landis.Extension.Output.BirdHabitat
                 parameters.SpeciesMapFileNames = speciesMapFileNames.Value;
                 readSpeciesMaps = true;
             }
-            if (readSpeciesMaps)
+
+            InputVar<string> logFile = new InputVar<string>(LogFile);
+            bool readLogFile = false;
+            if (ReadOptionalVar(logFile))
+            {
+                parameters.LogFileName = logFile.Value;
+                readLogFile = true;
+            }
+
+            if(readLogFile)
+            {
+                CheckNoDataAfter(string.Format("the {0} parameter", LogFile));
+            }
+            else if (readSpeciesMaps)
             {
                 CheckNoDataAfter(string.Format("the {0} parameter", SpeciesMapFileName));
             }

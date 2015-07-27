@@ -2,7 +2,7 @@
 //  Authors:  Robert M. Scheller, Jimm Domingo
 
 using Landis.Core;
-using Landis.Library.BiomassCohorts;
+using Landis.Library.LeafBiomassCohorts;
 using Landis.SpatialModeling;
 using Landis.Library.Metadata;
 using System.Collections.Generic;
@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using Landis.Library.Climate;
 using System.Linq;
 using System.Data;
+using System.IO;
 
 
 namespace Landis.Extension.Output.BirdHabitat
@@ -21,7 +22,8 @@ namespace Landis.Extension.Output.BirdHabitat
 
         public static readonly ExtensionType extType = new ExtensionType("output");
         public static readonly string PlugInName = "Output Bird Habitat";
-        public static MetadataTable<EventsLog> eventLog;
+        //public static MetadataTable<SpeciesHabitatLog> habitatLog;
+        private StreamWriter habitatLog;
 
         private string localVarMapNameTemplate;
         private string speciesMapNameTemplate;
@@ -90,7 +92,18 @@ namespace Landis.Extension.Output.BirdHabitat
             this.climateVarDefs = parameters.ClimateVars;
             this.modelDefs = parameters.Models;
             if (parameters.SpeciesMapFileNames != null)
-                MetadataHandler.InitializeMetadata(parameters.Timestep, parameters.SpeciesMapFileNames, parameters.Models, ModelCore);
+                MetadataHandler.InitializeMetadata(parameters.Timestep, parameters.SpeciesMapFileNames, parameters.Models, ModelCore, parameters.LogFileName);
+
+            ModelCore.UI.WriteLine("   Opening species habitat log files \"{0}\" ...", parameters.LogFileName);
+            habitatLog = Landis.Data.CreateTextFile(parameters.LogFileName);
+            habitatLog.AutoFlush = true;
+            habitatLog.Write("Time, Species, Avg_Landscape");
+            foreach (IEcoregion ecoregion in PlugIn.ModelCore.Ecoregions)
+            {
+                habitatLog.Write(", Avg_{0}", ecoregion.Name);
+            }
+            habitatLog.WriteLine("");
+            
         }
 
         //---------------------------------------------------------------------
@@ -253,12 +266,14 @@ namespace Landis.Extension.Output.BirdHabitat
 
                     // Calculate transformation
                     double transformValue = pctValue;
-                    if (neighborVar.Transform == "log10")
+                    if (neighborVar.Transform.Equals("log10", StringComparison.OrdinalIgnoreCase))
+                    //if (neighborVar.Transform == "log10")
                     {
 
                         transformValue = Math.Log10(pctValue + 1);
                     }
-                    else if (neighborVar.Transform == "ln")
+                    else if (neighborVar.Transform.Equals("ln", StringComparison.OrdinalIgnoreCase))
+                    //else if (neighborVar.Transform == "ln")
                     {
                         transformValue = Math.Log(pctValue + 1);
                     }
@@ -280,13 +295,23 @@ namespace Landis.Extension.Output.BirdHabitat
                 string climateYear = climateVar.Year;
                 int minMonth = climateVar.MinMonth;
                 int maxMonth = climateVar.MaxMonth;
+                string transform = climateVar.Transform;
 
                 int currentYear = PlugIn.ModelCore.CurrentTime;
                 int actualYear = currentYear;
 
+                int firstActiveEco = 0;
+                foreach (IEcoregion ecoregion in modelCore.Ecoregions)
+                {
+                    if (ecoregion.Active)
+                    {
+                        firstActiveEco = ecoregion.Index;
+                        break;
+                    }
+                }
                 if (Climate.Future_MonthlyData != null)
                 {
-                    AnnualClimate_Monthly AnnualWeather = Climate.Future_MonthlyData[Climate.Future_MonthlyData.Keys.Min()][0];
+                    AnnualClimate_Monthly AnnualWeather = Climate.Future_MonthlyData[Climate.Future_MonthlyData.Keys.Min()][firstActiveEco];
                     int maxSpinUpYear = Climate.Spinup_MonthlyData.Keys.Max();
 
                     if (PlugIn.ModelCore.CurrentTime > 0)
@@ -296,24 +321,24 @@ namespace Landis.Extension.Output.BirdHabitat
                         {
                             if (Climate.Future_MonthlyData.ContainsKey(currentYear - 1))
                             {
-                                AnnualWeather = Climate.Future_MonthlyData[currentYear - 1][0];
+                                AnnualWeather = Climate.Future_MonthlyData[currentYear - 1][firstActiveEco];
                             }
                             else
                             {
-                                AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear][0];
+                                AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear][firstActiveEco];
                             }
                         }
                         else
                         {
-                            AnnualWeather = Climate.Future_MonthlyData[currentYear][0];
+                            AnnualWeather = Climate.Future_MonthlyData[currentYear][firstActiveEco];
                         }
                     }
                     if (PlugIn.ModelCore.CurrentTime == 0)
                     {
                         if (climateYear == "prev")
-                            AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear - 1][0];
+                            AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear - 1][firstActiveEco];
                         else
-                            AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear][0];
+                            AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear][firstActiveEco];
                     }
                     actualYear = AnnualWeather.Year;
                 }
@@ -327,74 +352,96 @@ namespace Landis.Extension.Output.BirdHabitat
                 {
                     foreach (IEcoregion ecoregion in modelCore.Ecoregions)
                     {
-                        if(!ecoClimateVars.ContainsKey(ecoregion))
+                        if (ecoregion.Active)
                         {
-                            ecoClimateVars.Add(ecoregion,new Dictionary<string,double>());
-                        }
-                        AnnualClimate_Monthly AnnualWeather = Climate.Future_MonthlyData[Climate.Future_MonthlyData.Keys.Min()][ecoregion.Index];
-                        int maxSpinUpYear = Climate.Spinup_MonthlyData.Keys.Max();
+                            if (!ecoClimateVars.ContainsKey(ecoregion))
+                            {
+                                ecoClimateVars.Add(ecoregion, new Dictionary<string, double>());
+                            }
+                            AnnualClimate_Monthly AnnualWeather = Climate.Future_MonthlyData[Climate.Future_MonthlyData.Keys.Min()][ecoregion.Index];
+                            int maxSpinUpYear = Climate.Spinup_MonthlyData.Keys.Max();
 
-                        if (PlugIn.ModelCore.CurrentTime == 0)
-                        {
-                            if (climateYear == "prev")
-                                AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear - 1][ecoregion.Index];
-                            else
-                                AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear][ecoregion.Index];
-                        }
-                        else if (climateYear == "prev")
-                        {
-                            if (!Climate.Future_MonthlyData.ContainsKey(currentYear - 1))
+                            if (PlugIn.ModelCore.CurrentTime == 0)
                             {
-                                AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear][ecoregion.Index];
+                                if (climateYear == "prev")
+                                    AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear - 1][ecoregion.Index];
+                                else
+                                    AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear][ecoregion.Index];
+                            }
+                            else if (climateYear == "prev")
+                            {
+                                if (!Climate.Future_MonthlyData.ContainsKey(currentYear - 1))
+                                {
+                                    AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear][ecoregion.Index];
+                                }
+                                else
+                                    AnnualWeather = Climate.Future_MonthlyData[currentYear - 1][ecoregion.Index];
                             }
                             else
-                                AnnualWeather = Climate.Future_MonthlyData[currentYear - 1][ecoregion.Index];
-                        }
-                        else
-                        {
-                            AnnualWeather = Climate.Future_MonthlyData[currentYear][ecoregion.Index];
-                        }
+                            {
+                                AnnualWeather = Climate.Future_MonthlyData[currentYear][ecoregion.Index];
+                            }
 
-                        double monthTotal = 0;
-                        int monthCount = 0;
-                        double varValue = 0;
-                        var monthRange = Enumerable.Range(minMonth, (maxMonth - minMonth) + 1);
-                        foreach (int monthIndex in monthRange)
-                        {
-                            if (climateVar.ClimateLibVariable == "PDSI")
+                            double monthTotal = 0;
+                            int monthCount = 0;
+                            double varValue = 0;
+                            var monthRange = Enumerable.Range(minMonth, (maxMonth - minMonth) + 1);
+                            foreach (int monthIndex in monthRange)
                             {
-                                
-                                double monthPDSI = PDSI_Calculator.PDSI_Monthly[monthIndex-1];
-                                varValue = monthPDSI;
+                                //if (climateVar.ClimateLibVariable == "PDSI")
+                                //{
+
+                                //double monthPDSI = PDSI_Calculator.PDSI_Monthly[monthIndex-1];
+                                //   varValue = monthPDSI;
+                                //}
+                                if (climateVar.ClimateLibVariable.Equals("precip", StringComparison.OrdinalIgnoreCase))
+                                //if (climateVar.ClimateLibVariable == "Precip")
+                                {
+                                    double monthPrecip = AnnualWeather.MonthlyPrecip[monthIndex - 1];
+                                    varValue = monthPrecip * 10.0; //Convert cm to mm
+                                }
+                                else if (climateVar.ClimateLibVariable.Equals("temp", StringComparison.OrdinalIgnoreCase))
+                                //else if (climateVar.ClimateLibVariable == "Temp")
+                                {
+                                    double monthTemp = AnnualWeather.MonthlyTemp[monthIndex - 1];
+                                    varValue = monthTemp;
+                                }
+                                else
+                                {
+                                    string mesg = string.Format("Climate variable {0} is {1}; expected 'precip' or 'temp'.", climateVar.Name, climateVar.ClimateLibVariable);
+                                    throw new System.ApplicationException(mesg);
+                                }
+                                monthTotal += varValue;
+                                monthCount++;
                             }
-                            else if (climateVar.ClimateLibVariable == "Precip")
+                            double avgValue = monthTotal / (double)monthCount;
+                            double transformValue = avgValue;
+                            if (transform.Equals("log10", StringComparison.OrdinalIgnoreCase))
+                            //if (transform == "Log10")
                             {
-                                double monthPrecip = AnnualWeather.MonthlyPrecip[monthIndex - 1];
-                                varValue = monthPrecip;
+                                transformValue = Math.Log10(avgValue + 1);
                             }
-                            else if (climateVar.ClimateLibVariable == "Temp")
+                            else if (transform.Equals("ln", StringComparison.OrdinalIgnoreCase))
+                            //else if (transform == "ln")
                             {
-                                double monthTemp = AnnualWeather.MonthlyTemp[monthIndex - 1];
-                                varValue = monthTemp;
+                                transformValue = Math.Log(avgValue + 1);
                             }
-                            monthTotal += varValue;
-                            monthCount++;
+                            if (!ecoClimateVars[ecoregion].ContainsKey(varName))
+                            {
+                                ecoClimateVars[ecoregion].Add(varName, 0.0);
+                            }
+                            ecoClimateVars[ecoregion][varName] = transformValue;
                         }
-                        double avgValue = monthTotal / (double)monthCount;
-                        if(!ecoClimateVars[ecoregion].ContainsKey(varName))
-                        {
-                            ecoClimateVars[ecoregion].Add(varName,0.0);
-                        }
-                        ecoClimateVars[ecoregion][varName] = avgValue;
                     }
 
                     foreach (Site site in modelCore.Landscape.AllSites)
                     {
                         IEcoregion ecoregion = PlugIn.ModelCore.Ecoregion[site];
-
                         double climateValue = 0;
-
-                        climateValue = ecoClimateVars[ecoregion][varName];
+                        if (ecoregion != null)
+                        {
+                            climateValue = ecoClimateVars[ecoregion][varName];
+                        }
                         // Write Site Variable
                         SiteVars.ClimateVars[site][varName] = (float)climateValue;
                     }
@@ -409,6 +456,15 @@ namespace Landis.Extension.Output.BirdHabitat
                     {
                         string selectString = "Year = '" + actualYear + "' AND Month = '" + monthIndex + "'";
                         DataRow[] rows = parameters.ClimateDataTable.Select(selectString);
+                        if (rows.Length == 0)
+                        {
+                            string mesg = string.Format("Climate data is empty. No record exists for variable {0} in year {1}.",climateVar.Name,actualYear);
+                            if (actualYear == 0)
+                            {
+                                mesg = mesg + "  Note that if using the options Monthly_AverageAllYears or Daily_AverageAllYears you should provide average values for climate variables listed as Year 0.";
+                            }
+                            throw new System.ApplicationException(mesg);
+                        }
                         foreach (DataRow row in rows)
                         {
                             varValue = Convert.ToDouble(row[climateVar.ClimateLibVariable]);
@@ -417,46 +473,132 @@ namespace Landis.Extension.Output.BirdHabitat
                         monthCount++;
                     }
                     double avgValue = monthTotal / (double)monthCount;
-
+                    double transformValue = avgValue;
+                    if (transform.Equals("log10", StringComparison.OrdinalIgnoreCase))
+                    //if (transform == "Log10")
+                    {
+                        transformValue = Math.Log10(avgValue + 1);
+                    }
+                    else if (transform.Equals("ln", StringComparison.OrdinalIgnoreCase))
+                    //else if (transform == "ln")
+                    {
+                        transformValue = Math.Log(avgValue + 1);
+                    }
                     foreach (Site site in modelCore.Landscape.AllSites)
                     {
-                        SiteVars.ClimateVars[site][varName] = (float)avgValue;
+                        SiteVars.ClimateVars[site][varName] = (float)transformValue;
                     }
                 }
             }
+            
+            
+            Dictionary<string, float>[] ecoregionAvgValues = new Dictionary<string,float>[ModelCore.Ecoregions.Count];
+            Dictionary<string, float> landscapeAvgValues =  new Dictionary<string,float>();
+             int[] activeSiteCount = new int[ModelCore.Ecoregions.Count];
+             foreach (IEcoregion ecoregion in ModelCore.Ecoregions)
+             {
+                 ecoregionAvgValues[ecoregion.Index] = new Dictionary<string, float>();
+                 activeSiteCount[ecoregion.Index] = 0;
+             }
+             foreach (ActiveSite site in ModelCore.Landscape)
+             {
+                 IEcoregion ecoregion = ModelCore.Ecoregion[site];
+                 activeSiteCount[ecoregion.Index]++;
+             }
+
             // Calculate Species Models
             foreach (IModelDefinition model in modelDefs)
             {
+                float [] ecoregionSum = new float[ModelCore.Ecoregions.Count];
+                float landscapeSum = 0;
+                
                 foreach (Site site in modelCore.Landscape.AllSites)
                 {
+                    IEcoregion ecoregion = ModelCore.Ecoregion[site];
                     double modelPredict = 0;
                     int paramIndex = 0;
                     foreach (string parameter in model.Parameters)
                     {
                         string paramType = model.ParamTypes[paramIndex];
                         double paramValue = model.Values[paramIndex];
-                        if (paramType == "int")
+                        if (paramType.Equals("int", StringComparison.OrdinalIgnoreCase))
+                        //if (paramType == "int")
                         {
                             modelPredict += paramValue;
                         }
-                        else if (paramType == "neighbor")
+                        else if (paramType.Equals("neighbor", StringComparison.OrdinalIgnoreCase))
+                        //else if (paramType == "neighbor")
                         {
                             double modelValue = SiteVars.NeighborVars[site][parameter] * paramValue;
                             modelPredict += modelValue;
                         }
-                        else if (paramType == "climate")
+                        else if (paramType.Equals("climate", StringComparison.OrdinalIgnoreCase))
+                        //else if (paramType == "climate")
                         {
                             double modelValue = SiteVars.ClimateVars[site][parameter] * paramValue;
                             modelPredict += modelValue;
                         }
+                        else if (paramType.Equals("biomass", StringComparison.OrdinalIgnoreCase))
+                        //else if (paramType =="biomass")
+                        {
+                            double modelValue = Util.ComputeBiomass(SiteVars.Cohorts[site]) * paramValue;
+                            modelPredict += modelValue;
+                        }
+                        else
+                        {
+                            string mesg = string.Format("For model {0}, parameter {1} has parameter type {2}; expected 'int', 'neighbor','climate' or 'biomass'.", model.Name,parameter, paramType);
+                            throw new System.ApplicationException(mesg);
+                        }
 
                         paramIndex++;
                     }
+                    // Back-transform model prediction
+                    float finalPredict = (float)Math.Exp(modelPredict);
                     // Write Site Variable
-                    SiteVars.SpeciesModels[site][model.Name] = (float)modelPredict;
+                    SiteVars.SpeciesModels[site][model.Name] = (float)finalPredict;
+                    if(site.IsActive)
+                    {
+                        ecoregionSum[ecoregion.Index] += finalPredict;
+                        landscapeSum += finalPredict;
+                    }
                 }
-
+                foreach (IEcoregion ecoregion in ModelCore.Ecoregions)
+                {
+                    //ecoregionAvgValues[ecoregion.Index].Add(model.Name, 0);
+                    ecoregionAvgValues[ecoregion.Index][model.Name] = ecoregionSum[ecoregion.Index] / activeSiteCount[ecoregion.Index];
+                }
+                landscapeAvgValues[model.Name] = landscapeSum / ModelCore.Landscape.ActiveSiteCount;
             }
+
+            
+            foreach (IModelDefinition model in modelDefs)
+            {
+                habitatLog.Write("{0},", ModelCore.CurrentTime);
+                habitatLog.Write("{0},", model.Name);
+                habitatLog.Write("{0}", landscapeAvgValues[model.Name]);
+                foreach (IEcoregion ecoregion in ModelCore.Ecoregions)
+                {
+                    habitatLog.Write(",{0}", ecoregionAvgValues[ecoregion.Index][model.Name]);
+                }
+                habitatLog.WriteLine("");
+            }
+            
+
+            /*
+             foreach (IModelDefinition model in modelDefs)
+             {
+                 foreach (IEcoregion ecoregion in ModelCore.Ecoregions)
+                 {
+                     habitatLog.Clear();
+                     SpeciesHabitatLog shl = new SpeciesHabitatLog();
+                     shl.Time = ModelCore.CurrentTime;
+                     shl.Ecoregion = ecoregion.Name;
+                     shl.EcoregionIndex = ecoregion.Index;
+                     shl.NumSites = activeSiteCount[ecoregion.Index];
+                     //shl.SppHabitat[ecoregion.Index][model.Name] = avgHabitat[ecoregion.Index][;
+                 }
+             }
+             * */
 
             // Ouput Maps
             if (!(parameters.LocalVarMapFileNames == null))
@@ -548,6 +690,7 @@ namespace Landis.Extension.Output.BirdHabitat
                             if (site.IsActive)
                             {
                                 pixel.MapCode.Value = (short)System.Math.Round(SiteVars.SpeciesModels[site][sppModel.Name] * 100.0);
+                                //pixel.MapCode.Value = (short)System.Math.Round(SiteVars.SpeciesModels[site][sppModel.Name]);
                             }
                             else
                             {

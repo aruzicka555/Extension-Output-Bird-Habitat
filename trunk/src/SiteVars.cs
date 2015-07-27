@@ -3,7 +3,7 @@
 
 using Landis.Core;
 using Landis.SpatialModeling;
-using Landis.Library.BiomassCohorts;
+using Landis.Library.LeafBiomassCohorts;
 using System.Collections.Generic;
 
 namespace Landis.Extension.Output.BirdHabitat
@@ -21,7 +21,7 @@ namespace Landis.Extension.Output.BirdHabitat
 
         public static void Initialize()
         {
-            cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.BiomassCohorts");
+            cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.LeafBiomassCohorts");
 
             if (cohorts == null)
             {
@@ -34,7 +34,7 @@ namespace Landis.Extension.Output.BirdHabitat
             climateVars = PlugIn.ModelCore.Landscape.NewSiteVar<Dictionary<string, float>>();
             speciesModels = PlugIn.ModelCore.Landscape.NewSiteVar<Dictionary<string, float>>();
 
-            foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
+            foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
             {
                 SiteVars.LocalVars[site] = new Dictionary<string, int>();
                 SiteVars.DerivedVars[site] = new Dictionary<string, float>();

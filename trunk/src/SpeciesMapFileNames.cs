@@ -1,5 +1,3 @@
-//  Copyright 2005-2010 Portland State University, University of Wisconsin-Madison
-//  Authors:  Robert M. Scheller, Jimm Domingo
 
 using Edu.Wisc.Forest.Flel.Util;
 using Landis.Core;
@@ -14,7 +12,6 @@ namespace Landis.Extension.Output.BirdHabitat
     {
         public const string SpeciesNameVar = "species-name";
         public const string TimestepVar = "timestep";
-
 
         private static IDictionary<string, bool> knownVars;
         private static IDictionary<string, string> varValues;
@@ -47,5 +44,8 @@ namespace Landis.Extension.Output.BirdHabitat
             varValues[TimestepVar] = timestep.ToString();
             return OutputPath.ReplaceTemplateVars(template, varValues);
         }
+
+
+    
     }
 }
