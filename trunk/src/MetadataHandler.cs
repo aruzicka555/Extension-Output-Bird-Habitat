@@ -63,7 +63,7 @@ namespace Landis.Extension.Output.BirdHabitat
                     //sppModel.Name,
                     FilePath = @sppMapPath,
                     Map_DataType = MapDataType.Continuous,
-                    //Map_Unit = FieldUnits.Severity_Rank,
+                    Map_Unit = "Abundance",
                     Visualize = true,
                 };
                 Extension.OutputMetadatas.Add(mapOut_Birds);
