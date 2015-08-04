@@ -5,6 +5,7 @@ using Edu.Wisc.Forest.Flel.Util;
 using System.Collections.Generic;
 using Landis.Library.Climate;
 using System.Data;
+using System;
 
 namespace Landis.Extension.Output.BirdHabitat
 {
@@ -166,7 +167,12 @@ namespace Landis.Extension.Output.BirdHabitat
             }
             set
             {
-                year = value;
+                if ((value.Equals("current", StringComparison.OrdinalIgnoreCase)) || (value.Equals("prev", StringComparison.OrdinalIgnoreCase)))
+                    year = value;
+                else
+                {
+                    throw new InputValueException(value.ToString(), "Value must be 'current' or 'prev'.");
+                }
             }
         }
 
@@ -182,6 +188,8 @@ namespace Landis.Extension.Output.BirdHabitat
             }
             set
             {
+                if((value <1) || (value >12))
+                    throw new InputValueException(value.ToString(), "Value must be >=1 and <= 12.");
                 minMonth = value;
             }
         }
@@ -198,6 +206,10 @@ namespace Landis.Extension.Output.BirdHabitat
             }
             set
             {
+                if ((value < 1) || (value > 12))
+                    throw new InputValueException(value.ToString(), "Value must be >=1 and <= 12.");
+                if(value < minMonth)
+                    throw new InputValueException(value.ToString(), "Value must be <= MinMonth.");
                 maxMonth = value;
             }
         }
@@ -230,7 +242,12 @@ namespace Landis.Extension.Output.BirdHabitat
             }
             set
             {
-                transform = value;
+                if ((value.Equals("none", StringComparison.OrdinalIgnoreCase)) || (value.Equals("log10", StringComparison.OrdinalIgnoreCase)) || (value.Equals("ln", StringComparison.OrdinalIgnoreCase)))
+                    transform = value;
+                else
+                {
+                    throw new InputValueException(value.ToString(), "Value must be 'none', 'log10' or 'ln'.");
+                }
             }
         }
 

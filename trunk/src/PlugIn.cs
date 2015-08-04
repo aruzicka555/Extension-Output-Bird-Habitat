@@ -317,7 +317,7 @@ namespace Landis.Extension.Output.BirdHabitat
                     if (PlugIn.ModelCore.CurrentTime > 0)
                     {
                         currentYear = (PlugIn.ModelCore.CurrentTime - 1) + Climate.Future_MonthlyData.Keys.Min();
-                        if (climateYear == "prev")
+                        if (climateYear.Equals("prev", StringComparison.OrdinalIgnoreCase))
                         {
                             if (Climate.Future_MonthlyData.ContainsKey(currentYear - 1))
                             {
@@ -328,27 +328,37 @@ namespace Landis.Extension.Output.BirdHabitat
                                 AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear][firstActiveEco];
                             }
                         }
-                        else
+                        else if (climateYear.Equals("current", StringComparison.OrdinalIgnoreCase))
                         {
                             AnnualWeather = Climate.Future_MonthlyData[currentYear][firstActiveEco];
+                        }
+                        else
+                        {
+                            string mesg = string.Format("Year for climate variable {0} is {1}; expected 'current' or 'prev'.", climateVar.Name, climateVar.Year);
+                            throw new System.ApplicationException(mesg);
                         }
                     }
                     if (PlugIn.ModelCore.CurrentTime == 0)
                     {
-                        if (climateYear == "prev")
+                        if (climateYear.Equals("prev", StringComparison.OrdinalIgnoreCase))
                             AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear - 1][firstActiveEco];
-                        else
+                        else if (climateYear.Equals("current", StringComparison.OrdinalIgnoreCase))
                             AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear][firstActiveEco];
+                        else
+                        {
+                            string mesg = string.Format("Year for climate variable {0} is {1}; expected 'current' or 'prev'.", climateVar.Name, climateVar.Year);
+                            throw new System.ApplicationException(mesg);
+                        }
                     }
                     actualYear = AnnualWeather.Year;
                 }
                 else
                 {
-                    if (climateYear == "prev")
+                    if (climateYear.Equals("prev", StringComparison.OrdinalIgnoreCase))
                         actualYear = currentYear - 1;
                 }
 
-                if (climateVar.SourceName == "Library")
+                if (climateVar.SourceName.Equals("library", StringComparison.OrdinalIgnoreCase))
                 {
                     foreach (IEcoregion ecoregion in modelCore.Ecoregions)
                     {
@@ -363,12 +373,12 @@ namespace Landis.Extension.Output.BirdHabitat
 
                             if (PlugIn.ModelCore.CurrentTime == 0)
                             {
-                                if (climateYear == "prev")
+                                if (climateYear.Equals("prev", StringComparison.OrdinalIgnoreCase))
                                     AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear - 1][ecoregion.Index];
                                 else
                                     AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear][ecoregion.Index];
                             }
-                            else if (climateYear == "prev")
+                            else if (climateYear.Equals("prev", StringComparison.OrdinalIgnoreCase))
                             {
                                 if (!Climate.Future_MonthlyData.ContainsKey(currentYear - 1))
                                 {
@@ -584,34 +594,37 @@ namespace Landis.Extension.Output.BirdHabitat
             //}
 
 
-            
-             foreach (IModelDefinition model in modelDefs)
-             {
-                 habitatLog.Clear();
-                 SpeciesHabitatLog shlog = new SpeciesHabitatLog();
-                 shlog.Time = ModelCore.CurrentTime;
-                 shlog.Ecoregion = "TotalLandscape";
-                 shlog.SpeciesName = model.Name;
-                 //shlog.NumSites = activeSiteCount[ecoregion.Index];
-                 shlog.SppHabitat = landscapeAvgValues[model.Name];
-                 habitatLog.AddObject(shlog);
-                 habitatLog.WriteToFile();
+            if (parameters.LogFileName != null)
+            {
+                foreach (IModelDefinition model in modelDefs)
+                {
 
-                 foreach (IEcoregion ecoregion in ModelCore.Ecoregions)
-                 {
-                     habitatLog.Clear();
-                     shlog = new SpeciesHabitatLog();
-                     shlog.Time = ModelCore.CurrentTime;
-                     shlog.Ecoregion = ecoregion.Name;
-                     shlog.SpeciesName = model.Name;
-                     //shl.EcoregionIndex = ecoregion.Index;
-                     //shlog.NumSites = activeSiteCount[ecoregion.Index];
-                     shlog.SppHabitat = ecoregionAvgValues[ecoregion.Index][model.Name];
-                     habitatLog.AddObject(shlog);
-                     habitatLog.WriteToFile();
+                    habitatLog.Clear();
+                    SpeciesHabitatLog shlog = new SpeciesHabitatLog();
+                    shlog.Time = ModelCore.CurrentTime;
+                    shlog.Ecoregion = "TotalLandscape";
+                    shlog.SpeciesName = model.Name;
+                    //shlog.NumSites = activeSiteCount[ecoregion.Index];
+                    shlog.SppHabitat = landscapeAvgValues[model.Name];
+                    habitatLog.AddObject(shlog);
+                    habitatLog.WriteToFile();
 
-                 }
-             }
+                    foreach (IEcoregion ecoregion in ModelCore.Ecoregions)
+                    {
+                        habitatLog.Clear();
+                        shlog = new SpeciesHabitatLog();
+                        shlog.Time = ModelCore.CurrentTime;
+                        shlog.Ecoregion = ecoregion.Name;
+                        shlog.SpeciesName = model.Name;
+                        //shl.EcoregionIndex = ecoregion.Index;
+                        //shlog.NumSites = activeSiteCount[ecoregion.Index];
+                        shlog.SppHabitat = ecoregionAvgValues[ecoregion.Index][model.Name];
+                        habitatLog.AddObject(shlog);
+                        habitatLog.WriteToFile();
+
+                    }
+                }
+            }
              
 
             // Ouput Maps

@@ -34,18 +34,20 @@ namespace Landis.Extension.Output.BirdHabitat
             //---------------------------------------
             //          table outputs:   
             //---------------------------------------
-            System.IO.Directory.CreateDirectory(Path.GetDirectoryName(LogFileName));
-            PlugIn.habitatLog = new MetadataTable<SpeciesHabitatLog>(LogFileName);
-            OutputMetadata tblOut_events = new OutputMetadata()
+            if (LogFileName != null)
             {
-                Type = OutputType.Table,
-                Name = "SppHabitatLog",
-                FilePath = PlugIn.habitatLog.FilePath,
-                Visualize = true,
-            };
-            tblOut_events.RetriveFields(typeof(SpeciesHabitatLog));
-            Extension.OutputMetadatas.Add(tblOut_events);
-            
+                System.IO.Directory.CreateDirectory(Path.GetDirectoryName(LogFileName));
+                PlugIn.habitatLog = new MetadataTable<SpeciesHabitatLog>(LogFileName);
+                OutputMetadata tblOut_events = new OutputMetadata()
+                {
+                    Type = OutputType.Table,
+                    Name = "SppHabitatLog",
+                    FilePath = PlugIn.habitatLog.FilePath,
+                    Visualize = true,
+                };
+                tblOut_events.RetriveFields(typeof(SpeciesHabitatLog));
+                Extension.OutputMetadatas.Add(tblOut_events);
+            }
 
             //---------------------------------------            
             //          map outputs:         
