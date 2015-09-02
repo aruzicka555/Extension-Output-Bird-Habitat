@@ -25,6 +25,7 @@ namespace Landis.Extension.Output.BirdHabitat
         private List<IModelDefinition> modelDefn;
         private DataTable climateDataTable;
         private string logFileName;
+        private string speciesLogFileNames;
 
         //---------------------------------------------------------------------
 
@@ -201,7 +202,22 @@ namespace Landis.Extension.Output.BirdHabitat
                 logFileName = value;
             }
         }
-
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Template for the filenames for species model logs.
+        /// </summary>
+        public string SpeciesLogFileNames
+        {
+            get
+            {
+                return speciesLogFileNames;
+            }
+            set
+            {
+                BirdHabitat.SpeciesLogFileNames.CheckTemplateVars(value);
+                speciesLogFileNames = value;
+            }
+        }
         //---------------------------------------------------------------------
 
         public InputParameters(int speciesCount)

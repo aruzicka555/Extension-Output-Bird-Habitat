@@ -15,7 +15,7 @@ namespace Landis.Extension.Output.BirdHabitat
         
         public static ExtensionMetadata Extension {get; set;}
 
-        public static void InitializeMetadata(int Timestep, string SpeciesMapFileName, IEnumerable<IModelDefinition> modelDefs, ICore mCore, string LogFileName)
+        public static void InitializeMetadata(int Timestep, string SpeciesMapFileName, IEnumerable<IModelDefinition> modelDefs, ICore mCore, string LogFileName, string SpeciesLogFileNames)
         {
             ScenarioReplicationMetadata scenRep = new ScenarioReplicationMetadata() {
                 RasterOutCellArea = PlugIn.ModelCore.CellArea,
@@ -47,6 +47,25 @@ namespace Landis.Extension.Output.BirdHabitat
                 };
                 tblOut_events.RetriveFields(typeof(SpeciesHabitatLog));
                 Extension.OutputMetadatas.Add(tblOut_events);
+            }
+            if (SpeciesLogFileNames != null)
+            {
+                PlugIn.sppLogList = new Dictionary<string, MetadataTable<SpeciesHabitatLog>>();
+                foreach (ModelDefinition sppModel in modelDefs)
+                {
+                    string sppLogPath = BirdHabitat.SpeciesLogFileNames.ReplaceTemplateVars(SpeciesLogFileNames, sppModel.Name);
+                    System.IO.Directory.CreateDirectory(Path.GetDirectoryName(sppLogPath));
+                    PlugIn.sppLogList[sppModel.Name] = new MetadataTable<SpeciesHabitatLog>(sppLogPath);
+                    OutputMetadata tblOut_events = new OutputMetadata()
+                    {
+                        Type = OutputType.Table,
+                        Name = ("SpeciesLog_" + sppModel.Name),
+                        FilePath = sppLogPath,
+                        Visualize = true,
+                    };
+                    tblOut_events.RetriveFields(typeof(SpeciesHabitatLog));
+                    Extension.OutputMetadatas.Add(tblOut_events);
+                }
             }
 
             //---------------------------------------            

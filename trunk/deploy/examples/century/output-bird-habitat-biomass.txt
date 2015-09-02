@@ -107,4 +107,5 @@ NeighborVarMapFileNames output/bird-habitat/{neighbor-var-name}-{timestep}.img
 ClimateVarMapFileNames  output/bird-habitat/{climate-var-name}-{timestep}.img
 SpeciesMapFileNames	output/bird-habitat/habitat-{species-name}-{timestep}.img
 
+SpeciesLogFileNames output/bird-habitat/{species-name}_log.csv
 LogFile		output/bird-habitat/bird_habitat_log.csv

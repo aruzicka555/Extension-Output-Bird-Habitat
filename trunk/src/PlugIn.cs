@@ -23,6 +23,7 @@ namespace Landis.Extension.Output.BirdHabitat
         public static readonly ExtensionType extType = new ExtensionType("output");
         public static readonly string PlugInName = "Output Bird Habitat";
         public static MetadataTable<SpeciesHabitatLog> habitatLog;
+        public static Dictionary<string,MetadataTable<SpeciesHabitatLog>> sppLogList;
         //private StreamWriter habitatLog;
 
         private string localVarMapNameTemplate;
@@ -92,7 +93,7 @@ namespace Landis.Extension.Output.BirdHabitat
             this.climateVarDefs = parameters.ClimateVars;
             this.modelDefs = parameters.Models;
             if (parameters.SpeciesMapFileNames != null)
-                MetadataHandler.InitializeMetadata(parameters.Timestep, parameters.SpeciesMapFileNames, parameters.Models, ModelCore, parameters.LogFileName);
+                MetadataHandler.InitializeMetadata(parameters.Timestep, parameters.SpeciesMapFileNames, parameters.Models, ModelCore, parameters.LogFileName, parameters.SpeciesLogFileNames);
 
             //ModelCore.UI.WriteLine("   Opening species habitat log files \"{0}\" ...", parameters.LogFileName);
             //habitatLog = Landis.Data.CreateTextFile(parameters.LogFileName);
@@ -621,7 +622,37 @@ namespace Landis.Extension.Output.BirdHabitat
                         shlog.SppHabitat = ecoregionAvgValues[ecoregion.Index][model.Name];
                         habitatLog.AddObject(shlog);
                         habitatLog.WriteToFile();
+                    }
+                }
+            }
 
+            if (parameters.SpeciesLogFileNames != null)
+            {
+                foreach (IModelDefinition model in modelDefs)
+                {
+                    MetadataTable<SpeciesHabitatLog> speciesLog = sppLogList[model.Name];
+                    speciesLog.Clear();
+                    SpeciesHabitatLog sppLog = new SpeciesHabitatLog();
+                    sppLog.Time = ModelCore.CurrentTime;
+                    sppLog.Ecoregion = "TotalLandscape";
+                    sppLog.SpeciesName = model.Name;
+                    //shlog.NumSites = activeSiteCount[ecoregion.Index];
+                    sppLog.SppHabitat = landscapeAvgValues[model.Name];
+                    speciesLog.AddObject(sppLog);
+                    speciesLog.WriteToFile();
+
+                    foreach (IEcoregion ecoregion in ModelCore.Ecoregions)
+                    {
+                        speciesLog.Clear();
+                        sppLog = new SpeciesHabitatLog();
+                        sppLog.Time = ModelCore.CurrentTime;
+                        sppLog.Ecoregion = ecoregion.Name;
+                        sppLog.SpeciesName = model.Name;
+                        //shl.EcoregionIndex = ecoregion.Index;
+                        //shlog.NumSites = activeSiteCount[ecoregion.Index];
+                        sppLog.SppHabitat = ecoregionAvgValues[ecoregion.Index][model.Name];
+                        speciesLog.AddObject(sppLog);
+                        speciesLog.WriteToFile();
                     }
                 }
             }

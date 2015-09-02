@@ -110,5 +110,15 @@ namespace Landis.Extension.Output.BirdHabitat
         /// Log file name.
         /// </summary>
         string LogFileName { get; set; }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Template for the filenames for species output logs.
+        /// </summary>
+        string SpeciesLogFileNames
+        {
+            get;
+            set;
+        }
+        //---------------------------------------------------------------------
     }
 }
