@@ -37,22 +37,22 @@ DerivedLocalVariables
 NeighborhoodVariables
 >> Var Name	LocalVar		NeighborRadius	Transform
 >> --------	----------		--------------	---------
-loguc200	reclass2[UplandCon]	200		log10
+loguc200	reclass2[UplandCon]	200		ln
 uf500		UplandFor		500		none
-loglc200	reclass2[LowlandCon]	200		log10
+loglc200	reclass2[LowlandCon]	200		ln
 open1000	reclass2[Open]		1000		none
-logreg200	reclass2[Regen]		200		log10
-logopen200	reclass2[Open]		200		log10
-logreg1000	reclass2[Regen]		1000		log10
-loglf500	LowlandFor		500		log10
-loglf1000	LowlandFor		1000		log10
+logreg200	reclass2[Regen]		200		ln
+logopen200	reclass2[Open]		200		ln
+logreg1000	reclass2[Regen]		1000		ln
+loglf500	LowlandFor		500		ln
+loglf1000	LowlandFor		1000		ln
 
 
 ClimateVariables
 >> Var Name	Year	Months	Source				ClimateVar	Transform	
 >> --------	----	------	------				----------	---------
 temp		current	3 to 6	Library				Temp		none
-logprevprecip	prev	3 to 6	Library				Precip		log10
+logprevprecip	prev	3 to 6	Library				Precip		ln
 pdsi		current	3 to 6	example_monthly_climate_1979_2013.csv	PDSI	none
 >>precip	current 3 to 6  Library				Precip		none
 >>prevprecip	prev	3 to 6  Library				Precip		none
@@ -62,43 +62,43 @@ pdsi		current	3 to 6	example_monthly_climate_1979_2013.csv	PDSI	none
 
 
 SpeciesModels
->> Species		Parameter	Type	Value
->> -------		---------	----	-----
-BLBW	->	intercept	int	-2.235094
+>> Species	Parameter	Type		Value
+>> -------	---------	----		-----
+BLBW	->	intercept	int		-2.235094
 		loguc200	neighbor	0.4063549
 		open1000	neighbor	-0.0320014
-CONW	->	intercept	int	0.70589
+CONW	->	intercept	int		0.70589
 		loglc200	neighbor	1.25531
-		logprevprecip	climate	-1.94542
-CSWA	->	intercept	int	-1.68E+00
-		biomass	biomass	-7.87E-06
+		logprevprecip	climate		-1.94542
+CSWA	->	intercept	int		-1.68E+00
+		biomass		biomass		-7.87E-06
 		logreg200	neighbor	5.03E-01
-GWWA	->	intercept	int	-6.51E+00
-		biomass	biomass	-4.10E-05
-		logopen200	neighbor	9.30E-01
-		logreg1000	neighbor	8.07E-01
-		temp	climate	-2.04E-01
-OVEN	->	intercept	int	-1.58E+00
-		biomass	biomass	5.88E-06
+GWWA	->	intercept	int		-7.88E+00
+		biomass		biomass		-4.07E-05
+		logopen200	neighbor	0.9294
+		logreg1000	neighbor	1.312
+		logreg1000*temp	neighbor*climate	-0.0442
+OVEN	->	intercept	int		-1.58E+00
+		biomass		biomass		5.88E-06
 		loglc200	neighbor	-2.52E-01
-		logprevprecip	climate	2.73E-01
-		uf500	neighbor	2.04E-02
-PIWA	->	intercept	int	-5.228327
+		logprevprecip	climate		2.73E-01
+		uf500		neighbor	2.04E-02
+PIWA	->	intercept	int		-5.228327
 		loguc200	neighbor	0.823546
-		pdsi	climate	-0.180834
-		uf500	neighbor	0.020801
-RBNU	->	intercept	int	-2.76635
+		pdsi		climate		-0.180834
+		uf500		neighbor	0.020801
+RBNU	->	intercept	int		-2.76635
 		loguc200	neighbor	0.46619
-		pdsi	climate	-0.16414
->>REVI	->	intercept	int	0.962418
->>		biomass	biomass	0.006864
+		pdsi		climate		-0.16414
+>>REVI	->	intercept	int		0.962418
+>>		biomass		biomass		0.006864
 >>		loglc200	neighbor	-0.304662
 >>		loglf1000	neighbor	-0.149744
 >>		loglf500	neighbor	0.10487
-SCTA	->	intercept	int	-1.81633
+SCTA	->	intercept	int		-1.81633
 		loglf500	neighbor	-0.419
-		temp	climate	0.07293
-YBFL	->	intercept	int	-5.28615
+		temp		climate		0.07293
+YBFL	->	intercept	int		-5.28615
 		loglc200	neighbor	0.97475
 
 

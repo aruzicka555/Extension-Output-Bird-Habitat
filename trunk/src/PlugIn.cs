@@ -540,24 +540,71 @@ namespace Landis.Extension.Output.BirdHabitat
                         else if (paramType.Equals("neighbor", StringComparison.OrdinalIgnoreCase))
                         //else if (paramType == "neighbor")
                         {
-                            double modelValue = SiteVars.NeighborVars[site][parameter] * paramValue;
+                            double modelValue = SiteVars.NeighborVars[site][parameter];
+                            modelValue = modelValue * paramValue;
                             modelPredict += modelValue;
                         }
                         else if (paramType.Equals("climate", StringComparison.OrdinalIgnoreCase))
                         //else if (paramType == "climate")
                         {
-                            double modelValue = SiteVars.ClimateVars[site][parameter] * paramValue;
+                            double modelValue = SiteVars.ClimateVars[site][parameter];
+                            modelValue = modelValue * paramValue;
                             modelPredict += modelValue;
                         }
                         else if (paramType.Equals("biomass", StringComparison.OrdinalIgnoreCase))
                         //else if (paramType =="biomass")
                         {
-                            double modelValue = Util.ComputeBiomass(SiteVars.Cohorts[site]) * paramValue;
+                            double modelValue = Util.ComputeBiomass(SiteVars.Cohorts[site]);
+                            modelValue = modelValue * paramValue;
                             modelPredict += modelValue;
+                        }
+                        else if(paramType.Contains("*"))
+                        {
+                            string[] paramTypes = paramType.Split('*');
+                            string[] splitParameters = parameter.Split('*');
+                            double paramProduct = 1.0;
+                            if (paramTypes.Length != splitParameters.Length)
+                            {
+                                string mesg = string.Format("For model {0}, the number of parameters in {1} does not match the number of paramter types {2}.", model.Name, parameter, paramType);
+                                throw new System.ApplicationException(mesg);
+                            }
+                            else
+                            {
+                                int interactionIndex = 0;
+                                foreach (string pType in paramTypes)
+                                {
+                                    string param = splitParameters[interactionIndex];
+                                    if (pType.Equals("neighbor", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        double modelValue = SiteVars.NeighborVars[site][param];
+                                        paramProduct *= modelValue;
+                                    }
+                                    else if (pType.Equals("climate", StringComparison.OrdinalIgnoreCase))
+                                    //else if (paramType == "climate")
+                                    {
+                                        double modelValue = SiteVars.ClimateVars[site][param];
+                                        paramProduct *= modelValue;
+                                    }
+                                    else if (pType.Equals("biomass", StringComparison.OrdinalIgnoreCase))
+                                    //else if (paramType =="biomass")
+                                    {
+                                        double modelValue = Util.ComputeBiomass(SiteVars.Cohorts[site]);
+                                         paramProduct *= modelValue;
+                                    }
+                                    else
+                                    {
+                                        string mesg = string.Format("For model {0}, parameter {1} has parameter type {2}; expected 'int', 'neighbor', 'climate', 'biomass' or 'interaction'.", model.Name, param, pType);
+                                        throw new System.ApplicationException(mesg);
+                                    }
+                                    interactionIndex++;
+                                }
+                                double interactionValue = paramProduct * paramValue;
+                                modelPredict += interactionValue;
+                            }
                         }
                         else
                         {
-                            string mesg = string.Format("For model {0}, parameter {1} has parameter type {2}; expected 'int', 'neighbor','climate' or 'biomass'.", model.Name,parameter, paramType);
+                            string mesg = string.Format("For model {0}, parameter {1} has parameter type {2}; expected 'int', 'neighbor', 'climate', 'biomass' or 'interaction'.", model.Name,parameter, paramType);
                             throw new System.ApplicationException(mesg);
                         }
 
