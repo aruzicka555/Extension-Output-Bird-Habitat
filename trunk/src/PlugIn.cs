@@ -23,7 +23,7 @@ namespace Landis.Extension.Output.BirdHabitat
         public static readonly ExtensionType extType = new ExtensionType("output");
         public static readonly string PlugInName = "Output Bird Habitat";
         public static MetadataTable<SpeciesHabitatLog> habitatLog;
-        public static Dictionary<string,MetadataTable<SpeciesHabitatLog>> sppLogList;
+        public static MetadataTable<IndividualSpeciesHabitatLog>[] sppLogs;
         //private StreamWriter habitatLog;
 
         private string localVarMapNameTemplate;
@@ -558,6 +558,18 @@ namespace Landis.Extension.Output.BirdHabitat
                             modelValue = modelValue * paramValue;
                             modelPredict += modelValue;
                         }
+                        else if (paramType.Equals("lnbiomass", StringComparison.OrdinalIgnoreCase))
+                        {
+                            double modelValue = Math.Log(Util.ComputeBiomass(SiteVars.Cohorts[site])+1);
+                            modelValue = modelValue * paramValue;
+                            modelPredict += modelValue;
+                        }
+                        else if (paramType.Equals("logbiomass", StringComparison.OrdinalIgnoreCase))
+                        {
+                            double modelValue = Math.Log10(Util.ComputeBiomass(SiteVars.Cohorts[site]) + 1);
+                            modelValue = modelValue * paramValue;
+                            modelPredict += modelValue;
+                        }
                         else if(paramType.Contains("*"))
                         {
                             string[] paramTypes = paramType.Split('*');
@@ -675,32 +687,33 @@ namespace Landis.Extension.Output.BirdHabitat
 
             if (parameters.SpeciesLogFileNames != null)
             {
+                int selectModelCount = 0;
                 foreach (IModelDefinition model in modelDefs)
                 {
-                    MetadataTable<SpeciesHabitatLog> speciesLog = sppLogList[model.Name];
-                    speciesLog.Clear();
-                    SpeciesHabitatLog sppLog = new SpeciesHabitatLog();
+                    //MetadataTable<IndividualSpeciesHabitatLog> speciesLog = sppLogs[selectModelCount];
+                    sppLogs[selectModelCount].Clear();
+                    IndividualSpeciesHabitatLog sppLog = new IndividualSpeciesHabitatLog();
                     sppLog.Time = ModelCore.CurrentTime;
                     sppLog.Ecoregion = "TotalLandscape";
-                    sppLog.SpeciesName = model.Name;
+                    //sppLog.SpeciesName = model.Name;
                     //shlog.NumSites = activeSiteCount[ecoregion.Index];
                     sppLog.SppHabitat = landscapeAvgValues[model.Name];
-                    speciesLog.AddObject(sppLog);
-                    speciesLog.WriteToFile();
+                    sppLogs[selectModelCount].AddObject(sppLog);
+                    sppLogs[selectModelCount].WriteToFile();
 
                     foreach (IEcoregion ecoregion in ModelCore.Ecoregions)
                     {
-                        speciesLog.Clear();
-                        sppLog = new SpeciesHabitatLog();
+                        sppLogs[selectModelCount].Clear();
+                        sppLog = new IndividualSpeciesHabitatLog();
                         sppLog.Time = ModelCore.CurrentTime;
                         sppLog.Ecoregion = ecoregion.Name;
-                        sppLog.SpeciesName = model.Name;
-                        //shl.EcoregionIndex = ecoregion.Index;
+                        //sppLog.SpeciesName = model.Name;
                         //shlog.NumSites = activeSiteCount[ecoregion.Index];
                         sppLog.SppHabitat = ecoregionAvgValues[ecoregion.Index][model.Name];
-                        speciesLog.AddObject(sppLog);
-                        speciesLog.WriteToFile();
+                        sppLogs[selectModelCount].AddObject(sppLog);
+                        sppLogs[selectModelCount].WriteToFile();
                     }
+                    selectModelCount++;
                 }
             }
              

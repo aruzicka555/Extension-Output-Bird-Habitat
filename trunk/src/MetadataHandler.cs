@@ -50,12 +50,15 @@ namespace Landis.Extension.Output.BirdHabitat
             }
             if (SpeciesLogFileNames != null)
             {
-                PlugIn.sppLogList = new Dictionary<string, MetadataTable<SpeciesHabitatLog>>();
+                PlugIn.sppLogs = new MetadataTable<IndividualSpeciesHabitatLog>[50];
+                int selectModelCount = 0;
                 foreach (ModelDefinition sppModel in modelDefs)
                 {
                     string sppLogPath = BirdHabitat.SpeciesLogFileNames.ReplaceTemplateVars(SpeciesLogFileNames, sppModel.Name);
                     System.IO.Directory.CreateDirectory(Path.GetDirectoryName(sppLogPath));
-                    PlugIn.sppLogList[sppModel.Name] = new MetadataTable<SpeciesHabitatLog>(sppLogPath);
+                    PlugIn.sppLogs[selectModelCount] = new MetadataTable<IndividualSpeciesHabitatLog>(sppLogPath);
+                    selectModelCount++;
+
                     OutputMetadata tblOut_events = new OutputMetadata()
                     {
                         Type = OutputType.Table,
@@ -63,7 +66,7 @@ namespace Landis.Extension.Output.BirdHabitat
                         FilePath = sppLogPath,
                         Visualize = true,
                     };
-                    tblOut_events.RetriveFields(typeof(SpeciesHabitatLog));
+                    tblOut_events.RetriveFields(typeof(IndividualSpeciesHabitatLog));
                     Extension.OutputMetadatas.Add(tblOut_events);
                 }
             }
@@ -84,7 +87,7 @@ namespace Landis.Extension.Output.BirdHabitat
                     //sppModel.Name,
                     FilePath = @sppMapPath,
                     Map_DataType = MapDataType.Continuous,
-                    Map_Unit = "Abundance",
+                    Map_Unit = "Index of Abundance",
                     Visualize = true,
                 };
                 Extension.OutputMetadatas.Add(mapOut_Birds);

@@ -68,21 +68,21 @@ BLBW	->	intercept	int		-2.235094
 		loguc200	neighbor	0.4063549
 		open1000	neighbor	-0.0320014
 CONW	->	intercept	int		0.70589
-		loglc200	neighbor	1.25531
+		loguc200	neighbor	1.25531
 		logprevprecip	climate		-1.94542
 CSWA	->	intercept	int		-1.68E+00
-		biomass		biomass		-7.87E-06
-		logreg200	neighbor	5.03E-01
+		biomass		biomass		-7.873E-06
+		logreg200	neighbor	5.025E-01
 GWWA	->	intercept	int		-7.88E+00
 		biomass		biomass		-4.07E-05
 		logopen200	neighbor	0.9294
 		logreg1000	neighbor	1.312
 		logreg1000*temp	neighbor*climate	-0.0442
-OVEN	->	intercept	int		-1.58E+00
-		biomass		biomass		5.88E-06
-		loglc200	neighbor	-2.52E-01
-		logprevprecip	climate		2.73E-01
-		uf500		neighbor	2.04E-02
+OVEN	->	intercept	int		-1.5790
+		biomass		biomass		5.882E-06
+		loguc200	neighbor	-0.2520
+		logprevprecip	climate		0.2732
+		uf500		neighbor	0.02043
 PIWA	->	intercept	int		-5.228327
 		loguc200	neighbor	0.823546
 		pdsi		climate		-0.180834
@@ -90,11 +90,10 @@ PIWA	->	intercept	int		-5.228327
 RBNU	->	intercept	int		-2.76635
 		loguc200	neighbor	0.46619
 		pdsi		climate		-0.16414
->>REVI	->	intercept	int		0.962418
->>		biomass		biomass		0.006864
->>		loglc200	neighbor	-0.304662
->>		loglf1000	neighbor	-0.149744
->>		loglf500	neighbor	0.10487
+REVI	->	intercept	int		0.9421
+		logbiomass	lnbiomass	0.006812
+		loglc200	neighbor	-0.273753
+		loglf1000	neighbor	-0.062576
 SCTA	->	intercept	int		-1.81633
 		loglf500	neighbor	-0.419
 		temp		climate		0.07293
