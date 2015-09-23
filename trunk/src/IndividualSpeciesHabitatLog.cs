@@ -8,17 +8,18 @@ namespace Landis.Extension.Output.BirdHabitat
 {
     public class IndividualSpeciesHabitatLog
     {
+
+        [DataFieldAttribute(Desc = "Bird Model")]
+        public string SpeciesModel { set; get; }
+
         [DataFieldAttribute(Unit = FieldUnits.Year, Desc = "Simulation Year")]
         public int Time { set; get; }
 
         [DataFieldAttribute(Desc = "Ecoregion Name")]
         public string Ecoregion { set; get; }
-
-        //[DataFieldAttribute(Desc = "Species Name")]
-        //public string SpeciesName { set; get; }
-
-        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Index of Abundance", Format = "0.00")]
-        public double SppHabitat { set; get; }
+        
+        [DataFieldAttribute(Unit = "Index", Desc = "Index of Abundance", Format = "0.00")]
+        public double Index { set; get; }
 
     }
 }

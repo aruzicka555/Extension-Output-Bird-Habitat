@@ -6,6 +6,7 @@ using Landis.Library.Metadata;
 
 namespace Landis.Extension.Output.BirdHabitat
 {
+    
     public class SpeciesHabitatLog
     {
         [DataFieldAttribute(Unit = FieldUnits.Year, Desc = "Simulation Year")]
@@ -14,17 +15,11 @@ namespace Landis.Extension.Output.BirdHabitat
         [DataFieldAttribute(Desc = "Ecoregion Name")]
         public string Ecoregion { set; get; }
 
-        [DataFieldAttribute(Desc = "Species Name")]
-        public string SpeciesName { set; get; }
+        [DataFieldAttribute(Desc = "Bird Model Name")]
+        public string SpeciesModelName { set; get; }
 
-        //[DataFieldAttribute(Desc = "Ecoregion Index")]
-        //public int EcoregionIndex { set; get; }
-
-        //[DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Sites")]
-        //public int NumSites { set; get; }
-
-        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Index of Abundance", Format = "0.00")]
-        public double SppHabitat { set; get; }
-
+        [DataFieldAttribute(Unit = "Index", Desc = "Index of Abundance", Format = "0.00")] 
+        public double Index { set; get; }
+        
     }
 }

@@ -663,9 +663,9 @@ namespace Landis.Extension.Output.BirdHabitat
                     SpeciesHabitatLog shlog = new SpeciesHabitatLog();
                     shlog.Time = ModelCore.CurrentTime;
                     shlog.Ecoregion = "TotalLandscape";
-                    shlog.SpeciesName = model.Name;
+                    shlog.SpeciesModelName = model.Name;
                     //shlog.NumSites = activeSiteCount[ecoregion.Index];
-                    shlog.SppHabitat = landscapeAvgValues[model.Name];
+                    shlog.Index = landscapeAvgValues[model.Name];
                     habitatLog.AddObject(shlog);
                     habitatLog.WriteToFile();
 
@@ -675,10 +675,10 @@ namespace Landis.Extension.Output.BirdHabitat
                         shlog = new SpeciesHabitatLog();
                         shlog.Time = ModelCore.CurrentTime;
                         shlog.Ecoregion = ecoregion.Name;
-                        shlog.SpeciesName = model.Name;
+                        shlog.SpeciesModelName = model.Name;
                         //shl.EcoregionIndex = ecoregion.Index;
                         //shlog.NumSites = activeSiteCount[ecoregion.Index];
-                        shlog.SppHabitat = ecoregionAvgValues[ecoregion.Index][model.Name];
+                        shlog.Index = ecoregionAvgValues[ecoregion.Index][model.Name];
                         habitatLog.AddObject(shlog);
                         habitatLog.WriteToFile();
                     }
@@ -695,9 +695,9 @@ namespace Landis.Extension.Output.BirdHabitat
                     IndividualSpeciesHabitatLog sppLog = new IndividualSpeciesHabitatLog();
                     sppLog.Time = ModelCore.CurrentTime;
                     sppLog.Ecoregion = "TotalLandscape";
-                    //sppLog.SpeciesName = model.Name;
+                    sppLog.SpeciesModel = model.Name;
                     //shlog.NumSites = activeSiteCount[ecoregion.Index];
-                    sppLog.SppHabitat = landscapeAvgValues[model.Name];
+                    sppLog.Index = landscapeAvgValues[model.Name];
                     sppLogs[selectModelCount].AddObject(sppLog);
                     sppLogs[selectModelCount].WriteToFile();
 
@@ -707,9 +707,9 @@ namespace Landis.Extension.Output.BirdHabitat
                         sppLog = new IndividualSpeciesHabitatLog();
                         sppLog.Time = ModelCore.CurrentTime;
                         sppLog.Ecoregion = ecoregion.Name;
-                        //sppLog.SpeciesName = model.Name;
+                        sppLog.SpeciesModel = model.Name;
                         //shlog.NumSites = activeSiteCount[ecoregion.Index];
-                        sppLog.SppHabitat = ecoregionAvgValues[ecoregion.Index][model.Name];
+                        sppLog.Index = ecoregionAvgValues[ecoregion.Index][model.Name];
                         sppLogs[selectModelCount].AddObject(sppLog);
                         sppLogs[selectModelCount].WriteToFile();
                     }
