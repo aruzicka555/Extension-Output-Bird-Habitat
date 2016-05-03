@@ -55,6 +55,14 @@ namespace Landis.Extension.Output.BirdHabitat
         }
         //---------------------------------------------------------------------
         /// <summary>
+        /// NeighborVars
+        /// </summary>
+        List<IDistanceVariableDefinition> DistanceVars
+        {
+            get;
+        }
+        //---------------------------------------------------------------------
+        /// <summary>
         /// Models
         /// </summary>
         List<IModelDefinition> Models
@@ -83,6 +91,15 @@ namespace Landis.Extension.Output.BirdHabitat
         /// Template for the filenames for reclass maps.
         /// </summary>
         string ClimateMapFileNames
+        {
+            get;
+            set;
+        }
+        //---------------------------------------------------------------------        
+        /// <summary>
+        /// Template for the filenames for Distance variable maps.
+        /// </summary>
+        string DistanceMapFileNames
         {
             get;
             set;

@@ -5,7 +5,7 @@ Duration  50
 Species   CNF_species-1.17.14.txt
 
 Ecoregions      ./ecoregions-2regions.txt
-EcoregionsMap   ./ecoregions.gis
+EcoregionsMap   ./ecoregion_mod.img
 
 CellLength  100 << meters, 100 x 100 m = 1 ha
 
@@ -21,4 +21,6 @@ CellLength  100 << meters, 100 x 100 m = 1 ha
 
 >> Other Extensions         Initialization File
 >> ----------------         -------------------
-   "Output Bird Habitat Century"    output-bird-habitat-biomass.txt
+   "Output Bird Habitat Century"    output-bird-habitat-April16.txt
+   "Output Max Species Age"		max-spp-age.output.txt
+   "Output Leaf Biomass"	    output-leaf-biomass.txt

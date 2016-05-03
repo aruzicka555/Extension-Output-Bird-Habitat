@@ -33,6 +33,7 @@ namespace Landis.Extension.Output.BirdHabitat
         private IEnumerable<IVariableDefinition> varDefs;
         private IEnumerable<INeighborVariableDefinition> neighborVarDefs;
         private IEnumerable<IClimateVariableDefinition> climateVarDefs;
+        private IEnumerable<IDistanceVariableDefinition> distanceVarDefs;
         private IEnumerable<IModelDefinition> modelDefs;
 
         private static IInputParameters parameters;
@@ -91,6 +92,7 @@ namespace Landis.Extension.Output.BirdHabitat
             this.varDefs = parameters.DerivedVars;
             this.neighborVarDefs = parameters.NeighborVars;
             this.climateVarDefs = parameters.ClimateVars;
+            this.distanceVarDefs = parameters.DistanceVars;
             this.modelDefs = parameters.Models;
             if (parameters.SpeciesMapFileNames != null)
                 MetadataHandler.InitializeMetadata(parameters.Timestep, parameters.SpeciesMapFileNames, parameters.Models, ModelCore, parameters.LogFileName, parameters.SpeciesLogFileNames);
@@ -255,6 +257,13 @@ namespace Landis.Extension.Output.BirdHabitat
                             {
                                 if (SiteVars.DerivedVars[neighbor][varName] > 0)
                                     targetNeighborCells++;
+                            }
+                            else if (mapName.Equals("ecoregion", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if(varName.Equals(PlugIn.ModelCore.Ecoregion[neighbor].Name, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    targetNeighborCells++;
+                                }
                             }
                             else if (SiteVars.LocalVars[neighbor][mapName] == mapCode)
                             {
@@ -502,6 +511,397 @@ namespace Landis.Extension.Output.BirdHabitat
                 }
             }
             
+            // Calculate Distance Variables
+            foreach (IDistanceVariableDefinition distanceVar in distanceVarDefs)
+            {
+                //Parse LocalVar
+                string fullVar = distanceVar.LocalVariable;
+                string[] varSplit = fullVar.Split(new char[] { '[', ']' }, StringSplitOptions.RemoveEmptyEntries);
+                string varName = "";
+                int mapCode = 0;
+                string mapName = "";
+                if (varSplit.Length > 1)
+                {
+                    mapName = varSplit[0];
+                    varName = varSplit[1];
+
+                    foreach (IMapDefinition map in mapDefs)
+                    {
+                        if (map.Name == mapName)
+                        {
+                            int forTypeCnt = 1;
+                            foreach (IForestType forestType in map.ForestTypes)
+                            {
+                                if (forestType.Name == varName)
+                                {
+                                    mapCode = forTypeCnt;
+                                }
+                                forTypeCnt++;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    varName = fullVar;
+                }
+
+                // Calculate distance value (meters)
+
+                double cellLength = PlugIn.ModelCore.CellLength;
+                foreach (Site site in modelCore.Landscape.AllSites)
+                {
+                    /*
+                    int maxRows = Math.Max(PlugIn.ModelCore.Landscape.Rows - site.Location.Row,site.Location.Row-PlugIn.ModelCore.Landscape.Rows) ;
+                    int maxCols = Math.Max(PlugIn.ModelCore.Landscape.Columns - site.Location.Column, site.Location.Column - PlugIn.ModelCore.Landscape.Columns);
+                    double minDistance = double.MaxValue;
+
+                    if (mapName == "")
+                            {
+                                if (SiteVars.DerivedVars[site][varName] > 0)
+                                    minDistance = 0 ;
+                            }
+                            else if (mapName.Equals("ecoregion", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (varName.Equals(PlugIn.ModelCore.Ecoregion[site].Name, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    minDistance = 0 ;
+                                }
+                            }
+                            else if (SiteVars.LocalVars[site][mapName] == mapCode)
+                            {
+                                minDistance = 0 ;
+                            }
+
+                    double centroidDistance = 0;
+                    for (int iteration = 1; (iteration <= maxRows || iteration <= maxCols); iteration++)
+                    {
+                        int row = iteration;
+                        int col = 0;                        
+                        centroidDistance = DistanceFromCenter(row, col);
+                        if(centroidDistance > minDistance + cellLength)
+                        {
+                            break;
+                        }
+                        if (centroidDistance < minDistance)
+                        {
+                            RelativeLocation relativeloc = new RelativeLocation(row, col);
+                            Site neighbor = site.GetNeighbor(relativeloc);
+                            if (mapName == "")
+                            {
+                                if (SiteVars.DerivedVars[neighbor][varName] > 0)
+                                    minDistance = centroidDistance;
+                            }
+                            else if (mapName.Equals("ecoregion", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (varName.Equals(PlugIn.ModelCore.Ecoregion[neighbor].Name, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    minDistance = centroidDistance;
+                                }
+                            }
+                            else if (SiteVars.LocalVars[neighbor][mapName] == mapCode)
+                            {
+                                minDistance = centroidDistance;
+                            }
+                        }
+                        row = 0;
+                        col = iteration;
+                        centroidDistance = DistanceFromCenter(row, col);
+                        if (centroidDistance > minDistance + cellLength)
+                        {
+                            break;
+                        }
+                        if (centroidDistance < minDistance)
+                        {
+                            RelativeLocation relativeloc = new RelativeLocation(row, col);
+                            Site neighbor = site.GetNeighbor(relativeloc);
+                            if (mapName == "")
+                            {
+                                if (SiteVars.DerivedVars[neighbor][varName] > 0)
+                                    minDistance = centroidDistance;
+                            }
+                            else if (mapName.Equals("ecoregion", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (varName.Equals(PlugIn.ModelCore.Ecoregion[neighbor].Name, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    minDistance = centroidDistance;
+                                }
+                            }
+                            else if (SiteVars.LocalVars[neighbor][mapName] == mapCode)
+                            {
+                                minDistance = centroidDistance;
+                            }
+                        }
+                        row = iteration * -1;
+                        col = 0;
+                        centroidDistance = DistanceFromCenter(row, col);
+                        if (centroidDistance > minDistance + cellLength)
+                        {
+                            break;
+                        }
+                        if (centroidDistance < minDistance)
+                        {
+                            RelativeLocation relativeloc = new RelativeLocation(row, col);
+                            Site neighbor = site.GetNeighbor(relativeloc);
+                            if (mapName == "")
+                            {
+                                if (SiteVars.DerivedVars[neighbor][varName] > 0)
+                                    minDistance = centroidDistance;
+                            }
+                            else if (mapName.Equals("ecoregion", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (varName.Equals(PlugIn.ModelCore.Ecoregion[neighbor].Name, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    minDistance = centroidDistance;
+                                }
+                            }
+                            else if (SiteVars.LocalVars[neighbor][mapName] == mapCode)
+                            {
+                                minDistance = centroidDistance;
+                            }
+                        }
+                        row = 0;
+                        col = iteration * -1;
+                        centroidDistance = DistanceFromCenter(row, col);
+                        if (centroidDistance > minDistance + cellLength)
+                        {
+                            break;
+                        }
+                        if (centroidDistance < minDistance)
+                        {
+                            RelativeLocation relativeloc = new RelativeLocation(row, col);
+                            Site neighbor = site.GetNeighbor(relativeloc);
+                            if (mapName == "")
+                            {
+                                if (SiteVars.DerivedVars[neighbor][varName] > 0)
+                                    minDistance = centroidDistance;
+                            }
+                            else if (mapName.Equals("ecoregion", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (varName.Equals(PlugIn.ModelCore.Ecoregion[neighbor].Name, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    minDistance = centroidDistance;
+                                }
+                            }
+                            else if (SiteVars.LocalVars[neighbor][mapName] == mapCode)
+                            {
+                                minDistance = centroidDistance;
+                            }
+                        }
+                    }
+                    */
+                    double minDistance = double.MaxValue;
+                    // Spiral outward algorithm (http://stackoverflow.com/questions/3330181/algorithm-for-finding-nearest-object-on-2d-grid)
+                    // Start coordinates                    
+                    int xs = 0;
+                    int ys = 0;
+                    // Check point (xs, ys)
+                    if (mapName == "")
+                    {
+                        if (SiteVars.DerivedVars[site][varName] > 0)
+                            minDistance = 0;
+                    }
+                    else if (mapName.Equals("ecoregion", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (varName.Equals(PlugIn.ModelCore.Ecoregion[site].Name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            minDistance = 0;
+                        }
+                    }
+                    else if (SiteVars.LocalVars[site][mapName] == mapCode)
+                    {
+                        minDistance = 0;
+                    }
+
+                    int maxD1 = site.Location.Row + site.Location.Column;
+                    int maxD2 = site.Location.Row + (PlugIn.ModelCore.Landscape.Columns - site.Location.Column);
+                    int maxD3 = (PlugIn.ModelCore.Landscape.Rows - site.Location.Row) + site.Location.Column;
+                    int maxD4 = (PlugIn.ModelCore.Landscape.Rows - site.Location.Row) + (PlugIn.ModelCore.Landscape.Columns - site.Location.Column);
+                    int maxDistance = Math.Max(maxD1,maxD2);
+                    maxDistance = Math.Max(maxDistance, maxD3);
+                    maxDistance = Math.Max(maxDistance, maxD4);
+                    
+                    for (int d = 1; d < maxDistance; d++)
+                    {
+                        double minCentroidDistance = double.MaxValue;
+                        for (int i = 0; i < d + 1; i++)
+                        {
+                            int x1 = xs - d + i;
+                            int y1 = ys - i;
+                            // Check point (x1, y1)
+                            double centroidDistance = DistanceFromCenter(y1, x1);
+                            if (centroidDistance < minCentroidDistance)
+                                minCentroidDistance = centroidDistance;
+                            if (centroidDistance >= minDistance + cellLength)
+                            {
+                                break;
+                            }
+                            if (centroidDistance < minDistance)
+                            {
+                                RelativeLocation relativeloc = new RelativeLocation(y1, x1);
+                                Site neighbor = site.GetNeighbor(relativeloc);
+                                int neighborRow = neighbor.Location.Row;
+                                int neighborCol = neighbor.Location.Column;
+                                if ((neighborRow > 0 && neighborRow <= PlugIn.ModelCore.Landscape.Rows) && ((neighborCol > 0 && neighborCol <= PlugIn.ModelCore.Landscape.Columns)))
+                                {
+                                    if (mapName == "")
+                                    {
+                                        if (SiteVars.DerivedVars[neighbor][varName] > 0)
+                                            minDistance = centroidDistance;
+                                    }
+                                    else if (mapName.Equals("ecoregion", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        if (varName.Equals(PlugIn.ModelCore.Ecoregion[neighbor].Name, StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            minDistance = centroidDistance;
+                                        }
+                                    }
+                                    else if (SiteVars.LocalVars[neighbor][mapName] == mapCode)
+                                    {
+                                        minDistance = centroidDistance;
+                                    }
+                                }
+                            }
+
+                            int x2 = xs + d - i;
+                            int y2 = ys + i;
+                            // Check point (x2, y2)
+                            centroidDistance = DistanceFromCenter(y2, x2);
+                            if (centroidDistance < minCentroidDistance)
+                                minCentroidDistance = centroidDistance;
+                            if (centroidDistance >= minDistance + cellLength)
+                            {
+                                break;
+                            }
+                            if (centroidDistance < minDistance)
+                            {
+                                RelativeLocation relativeloc = new RelativeLocation(y2, x2);
+                                Site neighbor = site.GetNeighbor(relativeloc);
+                                int neighborRow = neighbor.Location.Row;
+                                int neighborCol = neighbor.Location.Column;
+                                if ((neighborRow > 0 && neighborRow <= PlugIn.ModelCore.Landscape.Rows) && ((neighborCol > 0 && neighborCol <= PlugIn.ModelCore.Landscape.Columns)))
+                                {
+                                    if (mapName == "")
+                                    {
+                                        if (SiteVars.DerivedVars[neighbor][varName] > 0)
+                                            minDistance = centroidDistance;
+                                    }
+                                    else if (mapName.Equals("ecoregion", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        if (varName.Equals(PlugIn.ModelCore.Ecoregion[neighbor].Name, StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            minDistance = centroidDistance;
+                                        }
+                                    }
+                                    else if (SiteVars.LocalVars[neighbor][mapName] == mapCode)
+                                    {
+                                        minDistance = centroidDistance;
+                                    }
+                                }
+                            }
+                           
+                        }
+
+
+                        for (int i = 1; i < d; i++)
+                        {
+                            int x1 = xs - i;
+                            int y1 = ys + d - i;
+
+                            // Check point (x1, y1)
+                            double centroidDistance = DistanceFromCenter(y1, x1);
+                            if (centroidDistance < minCentroidDistance)
+                                minCentroidDistance = centroidDistance;
+                            if (centroidDistance >= minDistance + cellLength)
+                            {
+                                break;
+                            }
+                            if (centroidDistance < minDistance)
+                            {
+                                RelativeLocation relativeloc = new RelativeLocation(y1, x1);
+                                Site neighbor = site.GetNeighbor(relativeloc);
+                                int neighborRow = neighbor.Location.Row;
+                                int neighborCol = neighbor.Location.Column;
+                                if ((neighborRow > 0 && neighborRow <= PlugIn.ModelCore.Landscape.Rows) && ((neighborCol > 0 && neighborCol <= PlugIn.ModelCore.Landscape.Columns)))
+                                {
+                                    if (mapName == "")
+                                    {
+                                        if (SiteVars.DerivedVars[neighbor][varName] > 0)
+                                            minDistance = centroidDistance;
+                                    }
+                                    else if (mapName.Equals("ecoregion", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        if (varName.Equals(PlugIn.ModelCore.Ecoregion[neighbor].Name, StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            minDistance = centroidDistance;
+                                        }
+                                    }
+                                    else if (SiteVars.LocalVars[neighbor][mapName] == mapCode)
+                                    {
+                                        minDistance = centroidDistance;
+                                    }
+                                }
+                            }
+                            int x2 = xs + d - i;
+                            int y2 = ys - i;
+
+                            // Check point (x2, y2)
+                            centroidDistance = DistanceFromCenter(y2, x2);
+                            if (centroidDistance < minCentroidDistance)
+                                minCentroidDistance = centroidDistance;
+                            if (centroidDistance >= minDistance + cellLength)
+                            {
+                                break;
+                            }
+                            if (centroidDistance < minDistance)
+                            {
+                                RelativeLocation relativeloc = new RelativeLocation(y2, x2);
+                                Site neighbor = site.GetNeighbor(relativeloc);
+                                int neighborRow = neighbor.Location.Row;
+                                int neighborCol = neighbor.Location.Column;
+                                if ((neighborRow > 0 && neighborRow <= PlugIn.ModelCore.Landscape.Rows) && ((neighborCol > 0 && neighborCol <= PlugIn.ModelCore.Landscape.Columns)))
+                                {
+                                    if (mapName == "")
+                                    {
+                                        if (SiteVars.DerivedVars[neighbor][varName] > 0)
+                                            minDistance = centroidDistance;
+                                    }
+                                    else if (mapName.Equals("ecoregion", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        if (varName.Equals(PlugIn.ModelCore.Ecoregion[neighbor].Name, StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            minDistance = centroidDistance;
+                                        }
+                                    }
+                                    else if (SiteVars.LocalVars[neighbor][mapName] == mapCode)
+                                    {
+                                        minDistance = centroidDistance;
+                                    }
+                                }
+                            }
+                        }
+                        if (minCentroidDistance > minDistance + cellLength)
+                        {
+                            break;
+                        }
+                    }
+                    // Calculate transformation
+                    double transformValue = minDistance;
+                    if (distanceVar.Transform.Equals("log10", StringComparison.OrdinalIgnoreCase))
+                    //if (neighborVar.Transform == "log10")
+                    {
+                        transformValue = Math.Log10(minDistance + 1);
+                    }
+                    else if (distanceVar.Transform.Equals("ln", StringComparison.OrdinalIgnoreCase))
+                    //else if (neighborVar.Transform == "ln")
+                    {
+                        transformValue = Math.Log(minDistance + 1);
+                    }
+
+                    // Write Site Variable
+                    SiteVars.DistanceVars[site][distanceVar.Name] = (float)transformValue;
+                }
+            }
             
             Dictionary<string, float>[] ecoregionAvgValues = new Dictionary<string,float>[ModelCore.Ecoregions.Count];
             Dictionary<string, float> landscapeAvgValues =  new Dictionary<string,float>();
@@ -533,26 +933,52 @@ namespace Landis.Extension.Output.BirdHabitat
                         string paramType = model.ParamTypes[paramIndex];
                         double paramValue = model.Values[paramIndex];
                         if (paramType.Equals("int", StringComparison.OrdinalIgnoreCase))
-                        //if (paramType == "int")
                         {
                             modelPredict += paramValue;
                         }
                         else if (paramType.Equals("neighbor", StringComparison.OrdinalIgnoreCase))
-                        //else if (paramType == "neighbor")
                         {
-                            double modelValue = SiteVars.NeighborVars[site][parameter];
-                            modelValue = modelValue * paramValue;
-                            modelPredict += modelValue;
+                            if (SiteVars.NeighborVars[site].ContainsKey(parameter))
+                            {
+                                double modelValue = SiteVars.NeighborVars[site][parameter];
+                                modelValue = modelValue * paramValue;
+                                modelPredict += modelValue;
+                            }
+                            else
+                            {
+                                string mesg = string.Format("The Neighborhood parameter {0} is listed for model {1} but is not included under NeighborhoodVariables.", parameter, model.Name);
+                                throw new System.ApplicationException(mesg);
+                            }
                         }
                         else if (paramType.Equals("climate", StringComparison.OrdinalIgnoreCase))
-                        //else if (paramType == "climate")
                         {
-                            double modelValue = SiteVars.ClimateVars[site][parameter];
-                            modelValue = modelValue * paramValue;
-                            modelPredict += modelValue;
+                            if (SiteVars.ClimateVars[site].ContainsKey(parameter))
+                            {
+                                double modelValue = SiteVars.ClimateVars[site][parameter];
+                                modelValue = modelValue * paramValue;
+                                modelPredict += modelValue;
+                            }
+                            else
+                            {
+                                string mesg = string.Format("The Climate parameter {0} is listed for model {1} but is not included under ClimateVariables.", parameter, model.Name);
+                                throw new System.ApplicationException(mesg);
+                            }
+                        }
+                        else if (paramType.Equals("distance", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (SiteVars.DistanceVars[site].ContainsKey(parameter))
+                            {
+                                double modelValue = SiteVars.DistanceVars[site][parameter];
+                                modelValue = modelValue * paramValue;
+                                modelPredict += modelValue;
+                            }
+                            else
+                            {
+                                string mesg = string.Format("The Distance parameter {0} is listed for model {1} but is not included under DistanceVariables.", parameter, model.Name);
+                                throw new System.ApplicationException(mesg);
+                            }
                         }
                         else if (paramType.Equals("biomass", StringComparison.OrdinalIgnoreCase))
-                        //else if (paramType =="biomass")
                         {
                             double modelValue = Util.ComputeBiomass(SiteVars.Cohorts[site]);
                             modelValue = modelValue * paramValue;
@@ -567,6 +993,24 @@ namespace Landis.Extension.Output.BirdHabitat
                         else if (paramType.Equals("logbiomass", StringComparison.OrdinalIgnoreCase))
                         {
                             double modelValue = Math.Log10(Util.ComputeBiomass(SiteVars.Cohorts[site]) + 1);
+                            modelValue = modelValue * paramValue;
+                            modelPredict += modelValue;
+                        }
+                        else if (paramType.Equals("age", StringComparison.OrdinalIgnoreCase))
+                        {
+                            double modelValue = Util.ComputeAge(SiteVars.Cohorts[site]);
+                            modelValue = modelValue * paramValue;
+                            modelPredict += modelValue;
+                        }
+                        else if (paramType.Equals("lnage", StringComparison.OrdinalIgnoreCase))
+                        {
+                            double modelValue = Math.Log(Util.ComputeAge(SiteVars.Cohorts[site]) + 1);
+                            modelValue = modelValue * paramValue;
+                            modelPredict += modelValue;
+                        }
+                        else if (paramType.Equals("logage", StringComparison.OrdinalIgnoreCase))
+                        {
+                            double modelValue = Math.Log10(Util.ComputeAge(SiteVars.Cohorts[site]) + 1);
                             modelValue = modelValue * paramValue;
                             modelPredict += modelValue;
                         }
@@ -588,24 +1032,54 @@ namespace Landis.Extension.Output.BirdHabitat
                                     string param = splitParameters[interactionIndex];
                                     if (pType.Equals("neighbor", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        double modelValue = SiteVars.NeighborVars[site][param];
-                                        paramProduct *= modelValue;
+                                        if (SiteVars.NeighborVars[site].ContainsKey(param))
+                                        {
+                                            double modelValue = SiteVars.NeighborVars[site][param];
+                                            paramProduct *= modelValue;
+                                        }
+                                        else
+                                        {
+                                            string mesg = string.Format("The Neighborhood parameter {0} is listed for model {1} but is not included under NeighborhoodVariables.", param, model.Name);
+                                            throw new System.ApplicationException(mesg);
+                                        }
                                     }
                                     else if (pType.Equals("climate", StringComparison.OrdinalIgnoreCase))
                                     //else if (paramType == "climate")
                                     {
-                                        double modelValue = SiteVars.ClimateVars[site][param];
-                                        paramProduct *= modelValue;
+                                        if (SiteVars.ClimateVars[site].ContainsKey(param))
+                                        {
+                                            double modelValue = SiteVars.ClimateVars[site][param];
+                                            paramProduct *= modelValue;
+                                        }
+                                        else
+                                        {
+                                            string mesg = string.Format("The Climate parameter {0} is listed for model {1} but is not included under ClimateVariables.", param, model.Name);
+                                            throw new System.ApplicationException(mesg);
+                                        }
+                                    }
+                                    else if (pType.Equals("distance", StringComparison.OrdinalIgnoreCase))
+                                    //else if (paramType == "climate")
+                                    {
+                                        if (SiteVars.DistanceVars[site].ContainsKey(param))
+                                        {
+                                            double modelValue = SiteVars.DistanceVars[site][param];
+                                            paramProduct *= modelValue;
+                                        }
+                                        else
+                                        {
+                                            string mesg = string.Format("The Distance parameter {0} is listed for model {1} but is not included under DistanceVariables.", param, model.Name);
+                                            throw new System.ApplicationException(mesg);
+                                        }
                                     }
                                     else if (pType.Equals("biomass", StringComparison.OrdinalIgnoreCase))
                                     //else if (paramType =="biomass")
                                     {
                                         double modelValue = Util.ComputeBiomass(SiteVars.Cohorts[site]);
-                                         paramProduct *= modelValue;
+                                        paramProduct *= modelValue;
                                     }
                                     else
                                     {
-                                        string mesg = string.Format("For model {0}, parameter {1} has parameter type {2}; expected 'int', 'neighbor', 'climate', 'biomass' or 'interaction'.", model.Name, param, pType);
+                                        string mesg = string.Format("For model {0}, parameter {1} has parameter type {2}; expected 'int', 'neighbor', 'climate', 'distance', 'biomass','lnbiomass', 'logbiomass','age', 'lnage', 'logage', or 'interaction'.", model.Name, param, pType);
                                         throw new System.ApplicationException(mesg);
                                     }
                                     interactionIndex++;
@@ -616,7 +1090,7 @@ namespace Landis.Extension.Output.BirdHabitat
                         }
                         else
                         {
-                            string mesg = string.Format("For model {0}, parameter {1} has parameter type {2}; expected 'int', 'neighbor', 'climate', 'biomass' or 'interaction'.", model.Name,parameter, paramType);
+                            string mesg = string.Format("For model {0}, parameter {1} has parameter type {2}; expected 'int', 'neighbor', 'climate', 'distance', 'biomass','lnbiomass', 'logbiomass','age', 'lnage', 'logage', or 'interaction'.", model.Name, parameter, paramType);
                             throw new System.ApplicationException(mesg);
                         }
 
@@ -783,6 +1257,31 @@ namespace Landis.Extension.Output.BirdHabitat
                             if (site.IsActive)
                             {
                                 pixel.MapCode.Value = (short)(System.Math.Round(SiteVars.ClimateVars[site][climateVar.Name] * 100.0));
+                            }
+                            else
+                            {
+                                //  Inactive site
+                                pixel.MapCode.Value = 0;
+                            }
+                            outputRaster.WriteBufferPixel();
+                        }
+                    }
+                }
+            }
+            if (!(parameters.DistanceMapFileNames == null))
+            {
+                //----- Write DistanceVar maps --------
+                foreach (DistanceVariableDefinition distanceVar in parameters.DistanceVars)
+                {
+                    string distanceVarPath = DistanceMapFileNames.ReplaceTemplateVars(parameters.DistanceMapFileNames, distanceVar.Name, PlugIn.ModelCore.CurrentTime);
+                    using (IOutputRaster<ShortPixel> outputRaster = modelCore.CreateRaster<ShortPixel>(distanceVarPath, modelCore.Landscape.Dimensions))
+                    {
+                        ShortPixel pixel = outputRaster.BufferPixel;
+                        foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
+                        {
+                            if (site.IsActive)
+                            {
+                                pixel.MapCode.Value = (short)(System.Math.Round(SiteVars.DistanceVars[site][distanceVar.Name] * 100.0));
                             }
                             else
                             {

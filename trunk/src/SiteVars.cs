@@ -15,6 +15,7 @@ namespace Landis.Extension.Output.BirdHabitat
         private static ISiteVar<Dictionary<string, float>> derivedVars;
         private static ISiteVar<Dictionary<string, float>> neighborVars;
         private static ISiteVar<Dictionary<string, float>> climateVars;
+        private static ISiteVar<Dictionary<string, float>> distanceVars;
         private static ISiteVar<Dictionary<string, float>> speciesModels;
         
         //---------------------------------------------------------------------
@@ -32,6 +33,7 @@ namespace Landis.Extension.Output.BirdHabitat
             derivedVars = PlugIn.ModelCore.Landscape.NewSiteVar<Dictionary<string, float>>();
             neighborVars = PlugIn.ModelCore.Landscape.NewSiteVar<Dictionary<string, float>>();
             climateVars = PlugIn.ModelCore.Landscape.NewSiteVar<Dictionary<string, float>>();
+            distanceVars = PlugIn.ModelCore.Landscape.NewSiteVar<Dictionary<string, float>>();
             speciesModels = PlugIn.ModelCore.Landscape.NewSiteVar<Dictionary<string, float>>();
 
             foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
@@ -40,6 +42,7 @@ namespace Landis.Extension.Output.BirdHabitat
                 SiteVars.DerivedVars[site] = new Dictionary<string, float>();
                 SiteVars.NeighborVars[site] = new Dictionary<string, float>();
                 SiteVars.ClimateVars[site] = new Dictionary<string, float>();
+                SiteVars.DistanceVars[site] = new Dictionary<string, float>();
                 SiteVars.SpeciesModels[site] = new Dictionary<string, float>();
             }
         }
@@ -82,6 +85,14 @@ namespace Landis.Extension.Output.BirdHabitat
             get
             {
                 return climateVars;
+            }
+        }
+        //---------------------------------------------------------------------
+        public static ISiteVar<Dictionary<string, float>> DistanceVars
+        {
+            get
+            {
+                return distanceVars;
             }
         }
         //---------------------------------------------------------------------

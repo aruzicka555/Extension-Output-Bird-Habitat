@@ -61,3 +61,5 @@ MapCode 6
    piceglau 100 140 180 200 220
    pinuresi 140 160 180
    pinustro 200 280 350
+
+MapCode 7

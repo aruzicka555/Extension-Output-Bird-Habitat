@@ -48,13 +48,16 @@ namespace Landis.Extension.Output.BirdHabitat
             const string DerivedLocalVariables = "DerivedLocalVariables";
             const string NeighborhoodVariables = "NeighborhoodVariables";
             const string ClimateVariables = "ClimateVariables";
+            const string DistanceVariables = "DistanceVariables";
             const string SpeciesModels = "SpeciesModels";
             const string LocalVarMapFileNames = "LocalVarMapFileNames";
             const string NeighborVarMapFileNames = "NeighborVarMapFileNames";
             const string ClimateVarMapFileNames = "ClimateVarMapFileNames";
+            const string DistanceVarMapFileNames = "DistanceVarMapFileNames";
             const string SpeciesMapFileName = "SpeciesMapFileNames";
             const string LogFile = "LogFile";
             const string SpeciesLogFileNames = "SpeciesLogFileNames";
+            List<string> keywordList = new List<string>{LocalVariables,DerivedLocalVariables,NeighborhoodVariables,ClimateVariables,DistanceVariables, SpeciesModels,LocalVarMapFileNames, NeighborVarMapFileNames, ClimateVarMapFileNames,DistanceVarMapFileNames, SpeciesMapFileName,LogFile,SpeciesLogFileNames};
 
             if (ReadOptionalName(LocalVariables))
             {
@@ -76,7 +79,7 @@ namespace Landis.Extension.Output.BirdHabitat
 
                 IMapDefinition mapDefn = null;
 
-                while (!AtEndOfInput && (CurrentName != DerivedLocalVariables) && (CurrentName != NeighborhoodVariables) && (CurrentName != ClimateVariables) && (CurrentName != SpeciesModels))
+                while (!AtEndOfInput && !keywordList.Contains(CurrentName))
                 {
                     StringReader currentLine = new StringReader(CurrentLine);
 
@@ -210,7 +213,7 @@ namespace Landis.Extension.Output.BirdHabitat
                 List<string> formulaSymbol = new List<string>(new string[] { "+", "-", "*" });
 
                 IVariableDefinition varDefn = null;
-                while (!AtEndOfInput && (CurrentName != NeighborhoodVariables) && (CurrentName != ClimateVariables) && (CurrentName != SpeciesModels))
+                while (!AtEndOfInput && !keywordList.Contains(CurrentName))
                 {
                     StringReader currentLine = new StringReader(CurrentLine);
 
@@ -259,7 +262,7 @@ namespace Landis.Extension.Output.BirdHabitat
                 InputVar<string> transform = new InputVar<string>("Transform");
 
                 INeighborVariableDefinition neighborVarDefn = null;
-                while (!AtEndOfInput && (CurrentName != ClimateVariables) && (CurrentName != SpeciesModels))
+                while (!AtEndOfInput && !keywordList.Contains(CurrentName))
                 {
                     StringReader currentLine = new StringReader(CurrentLine);
 
@@ -296,7 +299,7 @@ namespace Landis.Extension.Output.BirdHabitat
                 InputVar<string> transform = new InputVar<string>("Tranformation");
 
                 IClimateVariableDefinition climateVarDefn = null;
-                while (!AtEndOfInput  && (CurrentName != SpeciesModels))
+                while (!AtEndOfInput && !keywordList.Contains(CurrentName))
                 {
                     StringReader currentLine = new StringReader(CurrentLine);
                     ReadValue(climateVarName, currentLine);
@@ -339,7 +342,36 @@ namespace Landis.Extension.Output.BirdHabitat
                     GetNextLine();
                 }
             }
+            if (ReadOptionalName(DistanceVariables))
+            {
+                // Read Distance Variables
+                Dictionary<string, int> lineNumbers = new Dictionary<string, int>();
+                lineNumbers.Clear();
+                InputVar<string> distanceVarName = new InputVar<string>("Distance Variable Name");
+                InputVar<string> localVarName = new InputVar<string>("Local Variable Name");
+                InputVar<string> transform = new InputVar<string>("Transform");
 
+                IDistanceVariableDefinition distanceVarDefn = null;
+                while (!AtEndOfInput && !keywordList.Contains(CurrentName))
+                {
+                    StringReader currentLine = new StringReader(CurrentLine);
+
+                    ReadValue(distanceVarName, currentLine);
+                    CheckForRepeatedName(distanceVarName.Value, "var name", lineNumbers);
+
+                    distanceVarDefn = new DistanceVariableDefinition();
+                    distanceVarDefn.Name = distanceVarName.Value;
+
+                    ReadValue(localVarName, currentLine);
+                    distanceVarDefn.LocalVariable = localVarName.Value;
+                    
+                    ReadValue(transform, currentLine);
+                    distanceVarDefn.Transform = transform.Value;
+
+                    parameters.DistanceVars.Add(distanceVarDefn);
+                    GetNextLine();
+                }
+            }
             // Read species models
             ReadName(SpeciesModels);
 
@@ -356,7 +388,7 @@ namespace Landis.Extension.Output.BirdHabitat
 
             IModelDefinition modelDefn = null;
 
-            while (!AtEndOfInput && (CurrentName != LocalVarMapFileNames) && (CurrentName != NeighborVarMapFileNames) && (CurrentName != ClimateVarMapFileNames) && (CurrentName != SpeciesMapFileName) && (CurrentName != SpeciesLogFileNames) && (CurrentName != LogFile))
+            while (!AtEndOfInput && !keywordList.Contains(CurrentName))
             {
                 StringReader currentLine = new StringReader(CurrentLine);
 
@@ -430,6 +462,14 @@ namespace Landis.Extension.Output.BirdHabitat
                 readClimateMaps = true;
             }
 
+            InputVar<string> distanceMapFileNames = new InputVar<string>(DistanceVarMapFileNames);
+            bool readDistanceMaps = false;
+            if (ReadOptionalVar(distanceMapFileNames))
+            {
+                parameters.DistanceMapFileNames = distanceMapFileNames.Value;
+                readDistanceMaps = true;
+            }
+
             InputVar<string> speciesMapFileNames = new InputVar<string>(SpeciesMapFileName);
             bool readSpeciesMaps = false;
             if (ReadOptionalVar(speciesMapFileNames))
@@ -463,6 +503,10 @@ namespace Landis.Extension.Output.BirdHabitat
             else if (readSpeciesMaps)
             {
                 CheckNoDataAfter(string.Format("the {0} parameter", SpeciesMapFileName));
+            }
+            else if (readDistanceMaps)
+            {
+                CheckNoDataAfter(string.Format("the {0} parameter", DistanceVarMapFileNames));
             }
             else if (readClimateMaps)
             {

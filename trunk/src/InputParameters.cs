@@ -18,10 +18,12 @@ namespace Landis.Extension.Output.BirdHabitat
         private string localVarMapFileNames;
         private string neighborMapFileNames;
         private string climateMapFileNames;
+        private string distanceMapFileNames;
         private string speciesMapFileNames;
         private List<IVariableDefinition> varDefn;
         private List<INeighborVariableDefinition> neighborVarDefn;
         private List<IClimateVariableDefinition> climateVarDefn;
+        private List<IDistanceVariableDefinition> distanceVarDefn;
         private List<IModelDefinition> modelDefn;
         private DataTable climateDataTable;
         private string logFileName;
@@ -95,6 +97,18 @@ namespace Landis.Extension.Output.BirdHabitat
 
         //---------------------------------------------------------------------
         /// <summary>
+        /// Distance Variables
+        /// </summary>
+        public List<IDistanceVariableDefinition> DistanceVars
+        {
+            get
+            {
+                return distanceVarDefn;
+            }
+        }
+
+        //---------------------------------------------------------------------
+        /// <summary>
         /// Species Models
         /// </summary>
         public List<IModelDefinition> Models
@@ -151,6 +165,22 @@ namespace Landis.Extension.Output.BirdHabitat
             {
                 BirdHabitat.ClimateMapFileNames.CheckTemplateVars(value);
                 climateMapFileNames = value;
+            }
+        }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Template for the filenames for distance maps.
+        /// </summary>
+        public string DistanceMapFileNames
+        {
+            get
+            {
+                return distanceMapFileNames;
+            }
+            set
+            {
+                BirdHabitat.DistanceMapFileNames.CheckTemplateVars(value);
+                distanceMapFileNames = value;
             }
         }
         //---------------------------------------------------------------------
@@ -226,24 +256,11 @@ namespace Landis.Extension.Output.BirdHabitat
             varDefn = new List<IVariableDefinition>();
             neighborVarDefn = new List<INeighborVariableDefinition>();
             climateVarDefn = new List<IClimateVariableDefinition>();
+            distanceVarDefn = new List<IDistanceVariableDefinition>();
             modelDefn = new List<IModelDefinition>();
             climateDataTable = new DataTable();
         }
         //---------------------------------------------------------------------
 
-        /// <summary>
-        /// Initializes a new instance.
-        /// </summary>
-        /// <param name="timestep"></param>
-        /// <param name="mapDefns"></param>
-        /// <param name="mapFileNames"></param>
-/*        public Parameters(int              timestep,
-                          IMapDefinition[] mapDefns,
-                          string           mapFileNames)
-        {
-            this.timestep = timestep;
-            this.mapDefns = mapDefns;
-            this.mapFileNames = mapFileNames;
-        }*/
     }
 }

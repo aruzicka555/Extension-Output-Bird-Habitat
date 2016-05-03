@@ -20,5 +20,5 @@ CellLength  100 << meters, 100 x 100 m = 1 ha
 
 >> Other Extensions         Initialization File
 >> ----------------         -------------------
-"Output Bird Habitat Century"    output-bird-habitat-biomass.txt
+"Output Bird Habitat Century"    output-bird-habitat-April16.txt
 
