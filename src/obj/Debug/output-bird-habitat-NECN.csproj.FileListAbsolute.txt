@@ -1,5 +1,0 @@
-C:\Users\bmarr\Desktop\working_BirdHabitat\Extension-Output-Bird-Habitat\src\obj\Debug\output-bird-habitat-NECN.csprojResolveAssemblyReference.cache
-C:\Users\bmarr\Desktop\working_BirdHabitat\Extension-Output-Bird-Habitat\src\bin\Debug\Landis.Extension.Output.BirdHabitatNECN.dll
-C:\Users\bmarr\Desktop\working_BirdHabitat\Extension-Output-Bird-Habitat\src\bin\Debug\Landis.Extension.Output.BirdHabitatNECN.pdb
-C:\Users\bmarr\Desktop\working_BirdHabitat\Extension-Output-Bird-Habitat\src\obj\Debug\Landis.Extension.Output.BirdHabitatNECN.dll
-C:\Users\bmarr\Desktop\working_BirdHabitat\Extension-Output-Bird-Habitat\src\obj\Debug\Landis.Extension.Output.BirdHabitatNECN.pdb

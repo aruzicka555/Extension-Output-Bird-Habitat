@@ -234,7 +234,7 @@ namespace Landis.Extension.Output.BirdHabitat
                     TextReader.SkipWhitespace(currentLine);
                     string variable = TextReader.ReadWord(currentLine);
                     varDefn.Variables.Add(variable);
-                    while (currentLine.Peek() != null)
+                    while (currentLine.Peek() != -1)
                     {
                         TextReader.SkipWhitespace(currentLine);
                         string op = TextReader.ReadWord(currentLine);

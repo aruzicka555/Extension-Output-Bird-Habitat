@@ -1,7 +1,7 @@
 //  Copyright 2005-2010 Portland State University, University of Wisconsin-Madison
 //  Authors:  Robert M. Scheller, Jimm Domingo
 
-using Landis.Library.LeafBiomassCohorts;
+using Landis.Library.BiomassCohorts;
 using System.Collections.Generic;
 using System;
 //using Landis.Cohorts;

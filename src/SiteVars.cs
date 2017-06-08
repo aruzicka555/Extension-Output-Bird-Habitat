@@ -3,7 +3,7 @@
 
 using Landis.Core;
 using Landis.SpatialModeling;
-using Landis.Library.LeafBiomassCohorts;
+using Landis.Library.BiomassCohorts;
 using System.Collections.Generic;
 
 namespace Landis.Extension.Output.BirdHabitat

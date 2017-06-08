@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -8,7 +8,7 @@
     <ProjectGuid>{35088EC2-C1CD-4813-B8EE-F0B02B7679DB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Output_BirdHabitat</RootNamespace>
+    <RootNamespace>Landis.Extension.Output.BirdHabitat</RootNamespace>
     <AssemblyName>Landis.Extension.Output.BirdHabitat</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -25,47 +25,43 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>>bin\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Edu.Wisc.Forest.Flel.Util">
-     <SpecificVersion>False</SpecificVersion>
-     <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Landis.Core">
-     <SpecificVersion>False</SpecificVersion>
-     <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Landis.Library.AgeOnlyCohorts">
-     <SpecificVersion>False</SpecificVersion>
-     <Private>False</Private>
-    </Reference>
-     <Reference Include="Landis.Library.LeafBiomassCohorts">
-     <SpecificVersion>False</SpecificVersion>
-     <Private>False</Private>
-    </Reference>
-    <Reference Include="Landis.Library.BiomassCohorts-v2">
-     <SpecificVersion>False</SpecificVersion>
-     <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Landis.Library.Climate">
-     <SpecificVersion>False</SpecificVersion>
-     <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Landis.Library.Cohorts">
-     <SpecificVersion>False</SpecificVersion>
-     <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Landis.Library.BiomassCohorts-v2">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Landis.Library.Metadata">
-     <SpecificVersion>False</SpecificVersion>
-     <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Landis.SpatialModeling">
-     <SpecificVersion>False</SpecificVersion>
-     <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -76,7 +72,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClimateMapFileNames.cs" />
-    <Compile Include="EventsLog.cs" />
+    <Compile Include="IndividualSpeciesHabitatLog.cs" />
+    <Compile Include="DistanceVariableDefinition.cs" />
+    <Compile Include="DistanceMapFileNames.cs" />
+    <Compile Include="SpeciesHabitatLog.cs" />
     <Compile Include="MetadataHandler.cs" />
     <Compile Include="NeighborMapFileNames.cs" />
     <Compile Include="ShortPixel.cs" />
@@ -93,9 +92,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ClimateVariableDefinition.cs" />
+    <Compile Include="SpeciesLogFileNames.cs" />
+    <Compile Include="SpeciesMapFileNames.cs" />
     <Compile Include="NeighborVariableDefinition.cs" />
     <Compile Include="ModelDefinition.cs" />
-    <Compile Include="SpeciesHabitatLog.cs" />
     <Compile Include="VariableDefinition.cs" />
     <Compile Include="MapDefinition.cs" />
     <Compile Include="LocalMapFileNames.cs" />
@@ -114,4 +114,11 @@
   <PropertyGroup>
     <PreBuildEvent>call $(SolutionDir)\install-libs.cmd</PreBuildEvent>
   </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>

@@ -2,7 +2,7 @@
 //  Authors:  Robert M. Scheller, Jimm Domingo
 
 using Landis.Core;
-using Landis.Library.LeafBiomassCohorts;
+using Landis.Library.BiomassCohorts;
 using Landis.SpatialModeling;
 using Landis.Library.Metadata;
 using System.Collections.Generic;
