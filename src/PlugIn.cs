@@ -651,11 +651,11 @@ namespace Landis.Extension.Output.BirdHabitat
                                 foreach (int monthIndex in monthRange)
                                 {
                                     //if (climateVar.ClimateLibVariable == "PDSI")
-                                    //{
+                                   // {
 
-                                    //double monthPDSI = PDSI_Calculator.PDSI_Monthly[monthIndex-1];
-                                    //   varValue = monthPDSI;
-                                    //}
+                                     //  double monthPDSI = PDSI_Calculator.PDSI_Monthly[monthIndex-1];
+                                      // varValue = monthPDSI;
+                                   // }
                                     if (climateVar.ClimateLibVariable.Equals("precip", StringComparison.OrdinalIgnoreCase))
                                     {
                                         double monthPrecip = AnnualWeather.MonthlyPrecip[monthIndex - 1];

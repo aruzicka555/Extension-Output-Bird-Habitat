@@ -1,10 +1,10 @@
-Title:			README_OutputBirdHabitat
+Title:			README_ExtensionOutputBirdHabitat1.1
 Project:		LANDIS-II Landscape Change Model
 Project Component:	Extension-Output-Bird-Habitat
 Component Deposition:	https://github.com/LANDIS-II-Foundation/Extension-Output-Bird-Habitat
 Author:			LANDIS-II Foundation
 Origin Date:		03 Jun 2017
-Final Date:		03 Jun 2017
+Final Date:		12 Jun 2017
 
 
 Welcome to the source code repository for Extension-Output-Bird-Habitat, a LANDIS-II output extension.
