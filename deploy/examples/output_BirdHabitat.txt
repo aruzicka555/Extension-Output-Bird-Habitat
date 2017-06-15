@@ -52,7 +52,7 @@ SpeciesModels
 >> -------	---------	----		-----
 PIWA	->	intercept	int		0.005362
 		loguc200	neighbor	2.278565
-		pdsi		climate		0.834574
+>>		pdsi		climate		0.834574
 		uf500		neighbor	1.021019
 YBFL	->	intercept	int		0.005061
 		loglc200	neighbor	2.650505
