@@ -43,22 +43,22 @@ loglc200	reclass2[LowlandCon]	200		log10
 
 
 ClimateVariables
->> Var Name	Year	Months	Source				ClimateVar	
->> --------	----	------	------				----------
-pdsi		current	3 to 6	example_monthly_climate0.csv	PDSI
+>> Var Name	Year		Months		Source					ClimateVar	
+>> --------	----		------		------					----------
+>> pdsi		current		3 to 6		output_BirdHabitat_WeatherData.csv	PDSI
 
 SpeciesModels
 >> Species	Parameter	Type		Value
 >> -------	---------	----		-----
 PIWA	->	intercept	int		0.005362
 		loguc200	neighbor	2.278565
-		pdsi		climate		0.834574
+>>		pdsi		climate		0.834574
 		uf500		neighbor	1.021019
 YBFL	->	intercept	int		0.005061
 		loglc200	neighbor	2.650505
 
 
-LocalVarMapFileNames   	output/bird-habitat/{reclass-map-name}-{timestep}.img
-NeighborVarMapFileNames output/bird-habitat/{var-name}-{timestep}.img
-ClimateVarMapFileNames  output/bird-habitat/{climate-var-name}-{timestep}.img
-SpeciesMapFileNames	output/bird-habitat/habitat-{species-name}-{timestep}.img
+>> LocalVarMapFileNames   	outputs/bird-habitat/{reclass-map-name}-{timestep}.img
+>> NeighborVarMapFileNames outputs/bird-habitat/{var-name}-{timestep}.img
+ClimateVarMapFileNames  outputs/bird-habitat/{climate-var-name}-{timestep}.img
+SpeciesMapFileNames	outputs/bird-habitat/habitat-{species-name}-{timestep}.img

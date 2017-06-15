@@ -1,13 +1,27 @@
 LandisData  "Biomass Succession"
 
-Timestep  10
+>>------------------
+>> REQUIRED INPUTS
+>>------------------
 
-SeedingAlgorithm  WardSeedDispersal
+Timestep  			10
 
-InitialCommunities      "./initial-communities.txt"
-InitialCommunitiesMap   "./initial-communities.gis"
+SeedingAlgorithm  		WardSeedDispersal
 
->> CalibrateMode yes
+InitialCommunities      	./biomass-succession_InitialCommunities_s2e3.txt
+InitialCommunitiesMap   	./biomass-succession_InitialCommunities_s2e3.gis
+
+ClimateConfigFile		./biomass-succession_ClimateGenerator.txt
+
+>> CalibrateMode 		yes
+
+>> SpinUpMortalityFraction 	0.0
+
+
+
+>>----------------------------
+>> LIFE HISTORY PARAMETERS
+>>----------------------------
 
 MinRelativeBiomass
 
@@ -56,14 +70,12 @@ SpeciesParameters
    tsugcana   3.0	0.1		10		0.25	0.2	
 
 EcoregionParameters
->>	AET
->>	mm
+>>	AET (mm)
 eco1	600
 eco2	600
 
-DynamicInputFile	biomass-succession-dynamic-inputs.txt
- 	 
-AgeOnlyDisturbances:BiomassParameters  age-only-disturbances.txt
+DynamicInputFile    			biomass-succession_DynamicInputs_s2e3.txt 
+AgeOnlyDisturbances:BiomassParameters   biomass-succession_StdBiomassReductions.txt
  	 
 		 	 
 		 	 

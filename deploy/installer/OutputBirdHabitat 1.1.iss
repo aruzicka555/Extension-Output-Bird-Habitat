@@ -1,9 +1,9 @@
 #define PackageName      "Output Bird Habitat"
 #define PackageNameLong  "Output Bird Habitat Extension"
-#define Version          "0.1"
+#define Version          "1.1"
 #define ReleaseNumber    ""
 #define ReleaseType      "official"
-#define CoreVersion      "6.1"
+#define CoreVersion      "6.0"
 #define CoreReleaseAbbr  ""
 
 
@@ -34,16 +34,15 @@ Source: ..\..\src\bin\Debug\Landis.SpatialModeling.dll; DestDir: {#ExtDir}; Flag
 
 
 ; Complete example for testing the extension
-Source: ..\examples\base\*.txt; DestDir: {#AppDir}\examples\Output Bird Habitat
-Source: ..\examples\base\*.gis; DestDir: {#AppDir}\examples\Output Bird Habitat
-Source: ..\examples\base\*.bat; DestDir: {#AppDir}\examples\Output Bird Habitat
-Source: ..\examples\base\*.csv; DestDir: {#AppDir}\examples\Output Bird Habitat
-Source: ..\examples\base\*.xlsx; DestDir: {#AppDir}\examples\Output Bird Habitat
+Source: ..\examples\*.txt; DestDir: {#AppDir}\examples\Output Bird Habitat
+Source: ..\examples\*.gis; DestDir: {#AppDir}\examples\Output Bird Habitat
+Source: ..\examples\*.bat; DestDir: {#AppDir}\examples\Output Bird Habitat
+Source: ..\examples\*.csv; DestDir: {#AppDir}\examples\Output Bird Habitat
 
 
 ; LANDIS-II identifies the extension with the info in this .txt file
 ; NB. New releases must modify the name of this file and the info in it
-#define InfoTxt "OutputBirdHabitat 0.1.txt"
+#define InfoTxt "OutputBirdHabitat 1.1.txt"
 Source: {#InfoTxt}; DestDir: {#LandisPlugInDir}
 
 [Run]
