@@ -34,10 +34,10 @@ Source: ..\..\src\bin\Debug\Landis.SpatialModeling.dll; DestDir: {#ExtDir}; Flag
 
 
 ; Complete example for testing the extension
-Source: ..\examples\*.txt; DestDir: {#AppDir}\examples\Output Bird Habitat
-Source: ..\examples\*.gis; DestDir: {#AppDir}\examples\Output Bird Habitat
-Source: ..\examples\*.bat; DestDir: {#AppDir}\examples\Output Bird Habitat
-Source: ..\examples\*.csv; DestDir: {#AppDir}\examples\Output Bird Habitat
+Source: ..\examples\*.txt; DestDir: {#AppDir}\examples\Output Bird Habitat; Flags: replacesameversion
+Source: ..\examples\*.gis; DestDir: {#AppDir}\examples\Output Bird Habitat; Flags: replacesameversion
+Source: ..\examples\*.bat; DestDir: {#AppDir}\examples\Output Bird Habitat; Flags: replacesameversion
+Source: ..\examples\*.csv; DestDir: {#AppDir}\examples\Output Bird Habitat; Flags: replacesameversion
 
 
 ; LANDIS-II identifies the extension with the info in this .txt file
