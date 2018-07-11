@@ -1,0 +1,9 @@
+LandisData   Extension
+
+Name         "Output Bird Habitat"
+Version      "2.0"
+Type         output:birdhabitat
+Assembly     Landis.Extension.Output.BirdHabitat
+Class        Landis.Extension.Output.BirdHabitat.PlugIn
+Description  "Ouput Bird Habitat"
+CoreVersion  7.0
