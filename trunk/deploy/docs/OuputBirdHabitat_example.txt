@@ -1,0 +1,70 @@
+LandisData  "Output Bird Habitat"
+
+Timestep   10
+
+LocalVariables
+>> Map Name  	Forest Type	AgeRange	Species
+>> --------  	-----------	--------	-------
+reclass1 -> 	Open		All		None
+             	Regen	 	1 to 15	All
+		LowlandCon	All		Tamarack BlackSpruce WhiteCedar
+		LowlandHdwd	All		RedMaple BlackAsh GreenAsh Cottonwood Willow
+		LowlandMix	All		Tamarack BlackSpruce WhiteCedar RedMaple BlackAsh GreenAsh Cottonwood Willow
+		UplandCon	All		BalsamFir WhiteSpruce JackPine
+		UplandHdwd	All		BoxElder SugarMaple MtnMaple YellowBirch PaperBirch WhiteAsh
+		UplandMix	All		BalsamFir WhiteSpruce JackPine BoxElder SugarMaple MtnMaple YellowBirch PaperBirch WhiteAsh
+
+DerivedLocalVariables
+>> Var Name	Calc
+>> --------	--------
+LowlandFor	->  reclass1[LowlandCon] + reclass1[LowlandHdwd] + reclass1[LowlandMix]
+UplandFor	->  reclass1[UplandCon] + reclass1[UplandHdwd] + reclass1[UplandMix]
+Forest 		->  reclass1[LowlandCon] + reclass1[LowlandHdwd] + reclass1[LowlandMix] + reclass1[UplandCon] + reclass1[UplandHdwd] + reclass1[UplandMix]
+
+NeighborhoodVariables
+>> Var Name	LocalVar		NeighborRadius	Transform
+>> --------	----------		--------------	---------
+loguc200	reclass1[UplandCon]	200			ln
+uf500		UplandFor		500			none
+logforest200	Forest			200			ln
+
+ClimateVariables
+>> Var Name	Year	Months	Source				ClimateVar	Transform	
+>> --------	------	------	------				----------	---------
+temp		current	3 to 6	Library				Temp		none
+logprevprecip	prev	3 to 6	Library				Precip		ln
+pdsi		current 3 to 6	monthly_climate.csv		PDSI		none
+logprecip	current 3 to 6  Library				Precip		ln
+
+DistanceVariables
+>> Var Name	LocalVar		Transform
+>> --------	--------		---------
+lognearfor	Forest			ln
+
+SpeciesModels
+>> Species	Parameter		Type		Value
+>> -------	---------		----		-----
+CONW	->	intercept		int		0.70589
+		loglc200		neighbor	1.25531
+		logprevprecip		climate		-1.94542
+GWWA	->	intercept		int		-7.88
+		biomass			biomass		-0.00004077
+		logopen200		neighbor	0.9294
+		logreg1000		neighbor	1.312
+		logreg1000*temp		neighbor*climate	-0.0758
+RWBL	->	intercept		int		1.19624
+		lognearwat		distance	-0.97316
+		logwet500		neighbor	0.81119
+		uf1000			neighbor	-0.04465
+SOSP	->	intercept		int		-5.85534
+		logbiomass		lnbiomass	-0.05404
+		logopen200		neighbor	0.89742
+
+LocalVarMapFileNames   	output/bird-habitat/{local-var-name}-{timestep}.img
+NeighborVarMapFileNames 	output/bird-habitat/{neighbor-var-name}-{timestep}.img
+ClimateVarMapFileNames	output/bird-habitat/{climate-var-name}-{timestep}.img
+DistanceVarMapFileNames  	output/bird-habitat/{distance-var-name}-{timestep}.img
+SpeciesMapFileNames		output/bird-habitat/habitat-{species-name}-{timestep}.img
+
+SpeciesLogFileNames 	output/bird-habitat/{species-name}_log.csv
+LogFile			output/bird-habitat/bird_habitat_log.csv
