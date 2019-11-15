@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Landis.Extension.Output.LandcapeHabitat</RootNamespace>
+    <AssemblyName>Landis.Extension.Output.LandscapeHabitat</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Landis.Core" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Landis.Library.AgeOnlyCohorts-v3">
+      <HintPath>..\..\..\..\Support-Library-Dlls-v7\Landis.Library.AgeOnlyCohorts-v3.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.BiomassCohorts-v3">
+      <HintPath>..\..\..\..\Support-Library-Dlls-v7\Landis.Library.BiomassCohorts-v3.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Climate-v4">
+      <HintPath>..\..\..\..\Support-Library-Dlls-v7\Landis.Library.Climate-v4.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Cohorts-v2">
+      <HintPath>..\..\..\..\Support-Library-Dlls-v7\Landis.Library.Cohorts-v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Metadata-v2">
+      <HintPath>..\..\..\..\Support-Library-Dlls-v7\Landis.Library.Metadata-v2.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="IInputParameters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="InputParameters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="InputParametersParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PlugIn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+</Project>
