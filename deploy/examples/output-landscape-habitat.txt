@@ -63,3 +63,7 @@ LocalVarMapFileNames   	output/landscape-habitat/{local-var-name}-{timestep}.img
 NeighborVarMapFileNames output/landscape-habitat/{neighbor-var-name}-{timestep}.img
 ClimateVarMapFileNames  output/landscape-habitat/{climate-var-name}-{timestep}.img
 SpeciesMapFileNames	output/landscape-habitat/habitat-{species-name}-{timestep}.img
+
+SpeciesLogFileNames	output/landscape-habitat/{species-name}_log.csv
+LogFile			output/landscape-habitat/landscape_habitat_log.csv
+
