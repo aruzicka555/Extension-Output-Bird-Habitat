@@ -1,0 +1,9 @@
+LandisData   Extension
+
+Name         "Output Bird Habitat NECN"
+Version      "0.3 (beta release 22)"
+Type         output:birdhabitat
+Assembly     Landis.Extension.Output.BirdHabitatNECN
+Class        Landis.Extension.Output.BirdHabitat.PlugIn
+Description  "Ouput Bird Habitat NECN"
+CoreVersion  6.1
