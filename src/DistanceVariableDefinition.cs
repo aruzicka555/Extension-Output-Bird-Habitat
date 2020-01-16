@@ -4,7 +4,7 @@
 using Landis.Utilities;
 using System.Collections.Generic;
 
-namespace Landis.Extension.Output.BirdHabitat
+namespace Landis.Extension.Output.LandscapeHabitat
 {
     /// <summary>
     /// The definition of a Distance Variable.

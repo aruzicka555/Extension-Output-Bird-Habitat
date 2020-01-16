@@ -1,0 +1,65 @@
+LandisData  "Output Landscape Habitat"
+
+Timestep   10
+
+
+LocalVariables
+>> Map Name    	Forest Type    	AgeRange	Species
+>> --------    	-------------  	--------	-------
+>>   reclass1 ->	grass_brush	All	-All
+>>		jpine		All		pinubank
+>>		cedar		All		thujocci
+>>		tam		All		larilari
+>>		bspr		All		picemari
+>>		acidbog		All		picemari larilari
+>>		nhard		All		<<Insert species here>>		
+>>		rpine		All		pinuresi
+>>		sprfir		All		piceglau abiebals
+>>		aspenbirch	All		poputrem betupapy
+
+   reclass2 -> 	Open		All		None
+               	Regen	 	1 to 15		All
+		LowlandCon	All		thujocci
+		LowlandHdwd	All		fraxamer acerrubr
+		LowlandMix	All		thujocci fraxamer acerrubr
+		UplandCon	All		piceglau abiebals pinuresi pinubank
+		UplandHdwd	All		poputrem betupapy
+		UplandMix	All		poputrem betupapy piceglau abiebals pinuresi pinubank
+
+DerivedLocalVariables
+>> Var Name	Calc
+>> --------	--------
+  LowlandFor	->  reclass2[LowlandCon] + reclass2[LowlandHdwd] + reclass2[LowlandMix]
+  UplandFor 	->  reclass2[UplandCon] + reclass2[UplandHdwd] + reclass2[UplandMix]
+  Forest 	->  reclass2[LowlandCon] + reclass2[LowlandHdwd] + reclass2[LowlandMix] + reclass2[UplandCon] + reclass2[UplandHdwd] + reclass2[UplandMix]
+
+
+NeighborhoodVariables
+>> Var Name	LocalVar		NeighborRadius	Transform
+>> --------	----------		--------------	---------
+loguc200	reclass2[UplandCon]	200		ln
+uf500		UplandFor		500		none
+logforest200	Forest			200		ln
+
+
+ClimateVariables
+>> Var Name	Year	Months	Source				ClimateVar	Transform
+>> --------	----	------	------				----------	---------
+pdsi		current	3 to 6	monthlyPDSI_0_99.csv	PDSI		none
+
+SpeciesModels
+>> Species	Parameter	Type		Value
+>> -------	---------	----		-----
+SPP1	->	intercept	int	-5.228327
+		loguc200	neighbor	0.823546
+		pdsi	climate	-0.180834
+		uf500	neighbor	0.020801
+SPP2	->	intercept	int	-8.25				
+		logforest200	neighbor	1.922					
+		uf500*pdsi	neighbor*climate	-0.00147
+
+
+LocalVarMapFileNames   	output/landscape-habitat/{local-var-name}-{timestep}.img
+NeighborVarMapFileNames output/landscape-habitat/{neighbor-var-name}-{timestep}.img
+ClimateVarMapFileNames  output/landscape-habitat/{climate-var-name}-{timestep}.img
+SpeciesMapFileNames	output/landscape-habitat/habitat-{species-name}-{timestep}.img

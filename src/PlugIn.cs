@@ -1,4 +1,5 @@
-//  Authors:  Brian Miranda
+//  Copyright 2005-2010 Portland State University, University of Wisconsin-Madison
+//  Authors:  Robert M. Scheller, Jimm Domingo
 
 using Landis.Core;
 using Landis.Library.BiomassCohorts;
@@ -13,14 +14,14 @@ using System.Data;
 using System.IO;
 
 
-namespace Landis.Extension.Output.BirdHabitat
+namespace Landis.Extension.Output.LandscapeHabitat
 {
     public class PlugIn
         : ExtensionMain
     {
 
         public static readonly ExtensionType extType = new ExtensionType("output");
-        public static readonly string PlugInName = "Output Bird Habitat";
+        public static readonly string PlugInName = "Output Landscape Habitat";
         public static MetadataTable<SpeciesHabitatLog> habitatLog;
         public static MetadataTable<IndividualSpeciesHabitatLog>[] sppLogs;
         //private StreamWriter habitatLog;
@@ -650,11 +651,11 @@ namespace Landis.Extension.Output.BirdHabitat
                                 foreach (int monthIndex in monthRange)
                                 {
                                     //if (climateVar.ClimateLibVariable == "PDSI")
-                                   // {
+                                    //{
 
-                                     //  double monthPDSI = PDSI_Calculator.PDSI_Monthly[monthIndex-1];
-                                      // varValue = monthPDSI;
-                                   // }
+                                    //double monthPDSI = PDSI_Calculator.PDSI_Monthly[monthIndex-1];
+                                    //   varValue = monthPDSI;
+                                    //}
                                     if (climateVar.ClimateLibVariable.Equals("precip", StringComparison.OrdinalIgnoreCase))
                                     {
                                         double monthPrecip = AnnualWeather.MonthlyPrecip[monthIndex - 1];
@@ -708,25 +709,30 @@ namespace Landis.Extension.Output.BirdHabitat
                         int monthCount = 0;
                         double varValue = 0;
                         var monthRange = Enumerable.Range(minMonth, (maxMonth - minMonth) + 1);
+                        if (actualYear < 0)
+                            actualYear = 0;
                         foreach (int monthIndex in monthRange)
                         {
                             string selectString = "Year = '" + actualYear + "' AND Month = '" + monthIndex + "'";
                             DataRow[] rows = parameters.ClimateDataTable.Select(selectString);
-                            if (rows.Length == 0)
+                            if (rows.Length > 0)
                             {
-                                string mesg = string.Format("Climate data is empty. No record exists for variable {0} in year {1}.", climateVar.Name, actualYear);
-                                if (actualYear == 0)
+                                foreach (DataRow row in rows)
                                 {
-                                    mesg = mesg + "  Note that if using the options Monthly_AverageAllYears or Daily_AverageAllYears you should provide average values for climate variables listed as Year 0.";
+                                    varValue = Convert.ToDouble(row[climateVar.ClimateLibVariable]);
                                 }
-                                throw new System.ApplicationException(mesg);
+                                monthTotal += varValue;
+                                monthCount++;
                             }
-                            foreach (DataRow row in rows)
+                        }
+                        if (monthCount == 0)
+                        {
+                            string mesg = string.Format("Climate data is empty. No record exists for variable {0} in year {1}.", climateVar.Name, actualYear);
+                            if (actualYear == 0)
                             {
-                                varValue = Convert.ToDouble(row[climateVar.ClimateLibVariable]);
+                                mesg = mesg + "  Note that if using the options Monthly_AverageAllYears or Daily_AverageAllYears you should provide average values for climate variables listed as Year 0.";
                             }
-                            monthTotal += varValue;
-                            monthCount++;
+                            throw new System.ApplicationException(mesg);
                         }
                         double avgValue = monthTotal / (double)monthCount;
                         double transformValue = avgValue;

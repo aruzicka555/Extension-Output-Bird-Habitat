@@ -1,11 +1,12 @@
 //  Copyright 2005-2010 Portland State University, University of Wisconsin-Madison
 //  Authors:  Robert M. Scheller, Jimm Domingo
 
+
 using Landis.Utilities;
 using Landis.Core;
 using System.Collections.Generic;
 
-namespace Landis.Extension.Output.BirdHabitat
+namespace Landis.Extension.Output.LandscapeHabitat
 {
     /// <summary>
     /// Methods for working with the template for filenames of reclass maps.
