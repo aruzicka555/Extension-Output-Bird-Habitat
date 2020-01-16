@@ -1,4 +1,4 @@
-# Extension-Output-Bird-Habitat
+# Extension-Output-Landscape-Habitat
 
 Changes to this extension are governed by the [**Repository Rules**](https://sites.google.com/site/landismodel/developers) from the Technical Advisory Committee.
 
