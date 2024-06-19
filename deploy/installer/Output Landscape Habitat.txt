@@ -1,9 +1,9 @@
 LandisData   Extension
 
 Name         "Output Landscape Habitat"
-Version      "1.0 (release candidate 2)"
+Version      "2.0"
 Type         output:landscapehabitat
 Assembly     Landis.Extension.Output.LandscapeHabitat
 Class        Landis.Extension.Output.LandscapeHabitat.PlugIn
 Description  "Ouput Landscape Habitat"
-CoreVersion  7.0
+CoreVersion  8.0

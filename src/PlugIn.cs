@@ -2,7 +2,7 @@
 //  Authors:  Robert M. Scheller, Jimm Domingo
 
 using Landis.Core;
-using Landis.Library.BiomassCohorts;
+using Landis.Library.UniversalCohorts;
 using Landis.SpatialModeling;
 using Landis.Library.Metadata;
 using System.Collections.Generic;
@@ -1217,8 +1217,8 @@ namespace Landis.Extension.Output.LandscapeHabitat
                             {
                                 foreach (ICohort cohort in SiteVars.Cohorts[site][species])
                                 {
-                                    if (cohort.Age >= ftype.MinAge && cohort.Age <= ftype.MaxAge)
-                                        cohortValue += cohort.Biomass;
+                                    if (cohort.Data.Age >= ftype.MinAge && cohort.Data.Age <= ftype.MaxAge)
+                                        cohortValue += cohort.Data.Biomass;
                                 }
                             }
                             forTypValue[forTypeCnt] += cohortValue;
@@ -1254,6 +1254,12 @@ namespace Landis.Extension.Output.LandscapeHabitat
             double aSq = System.Math.Pow(column, 2);
             double bSq = System.Math.Pow(row, 2);
             return System.Math.Sqrt(aSq + bSq);
+        }
+
+        public override void AddCohortData()
+        {
+            // ADD CUSTOM DYNAMIC COHORT FIELDS HERE
+            return;
         }
     }
 }

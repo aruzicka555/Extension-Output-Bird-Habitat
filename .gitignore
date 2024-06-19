@@ -158,3 +158,4 @@ $RECYCLE.BIN/
 # LANDIS-II
 /src/lib/*.dll
 /src/.vs
+deploy/Landis.Extension.Output.LandscapeHabitat.deps.json

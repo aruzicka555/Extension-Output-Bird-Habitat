@@ -3,7 +3,7 @@
 
 using Landis.Core;
 using Landis.SpatialModeling;
-using Landis.Library.BiomassCohorts;
+using Landis.Library.UniversalCohorts;
 using System.Collections.Generic;
 
 namespace Landis.Extension.Output.LandscapeHabitat
@@ -22,7 +22,7 @@ namespace Landis.Extension.Output.LandscapeHabitat
 
         public static void Initialize()
         {
-            cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.BiomassCohorts");
+            cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.UniversalCohorts");
 
             if (cohorts == null)
             {

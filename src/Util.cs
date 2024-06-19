@@ -1,7 +1,7 @@
 //  Copyright 2005-2010 Portland State University, University of Wisconsin-Madison
 //  Authors:  Robert M. Scheller, Jimm Domingo
 
-using Landis.Library.BiomassCohorts;
+using Landis.Library.UniversalCohorts;
 using System.Collections.Generic;
 using System;
 //using Landis.Cohorts;
@@ -18,7 +18,7 @@ namespace Landis.Extension.Output.LandscapeHabitat
             int total = 0;
             if (cohorts != null)
                 foreach (ICohort cohort in cohorts)
-                    total += cohort.Biomass;
+                    total += cohort.Data.Biomass;
             return total;
         }
 
@@ -44,8 +44,8 @@ namespace Landis.Extension.Output.LandscapeHabitat
                 {
                     foreach (ICohort cohort in speciesCohorts)
                     {
-                        int age = cohort.Age;
-                        int biomass = cohort.Biomass;
+                        int age = cohort.Data.Age;
+                        int biomass = cohort.Data.Biomass;
                         if (ageDictionary.ContainsKey(age))
                         {
                             ageDictionary[age] = ageDictionary[age] + biomass;

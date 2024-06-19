@@ -1,13 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2036
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "landscape-habitat-output", "landscape-habitat-output.csproj", "{8DABE007-924C-4184-9465-B03537BFCBA4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Console-Debug", "..\..\brmiranda\Core-Model-v7\Tool-Console\src\Console-Debug.csproj", "{CF8BB87B-81B5-4DE7-9B9E-2CADCCDDC6E3}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extension_Admin", "..\..\brmiranda\Core-Model-v7\Tool-Extension-Admin\src\Extension_Admin.csproj", "{6A278C05-35E3-4415-B18F-D4A42888F33D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,22 +21,6 @@ Global
 		{8DABE007-924C-4184-9465-B03537BFCBA4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8DABE007-924C-4184-9465-B03537BFCBA4}.Release|x64.ActiveCfg = Release|Any CPU
 		{8DABE007-924C-4184-9465-B03537BFCBA4}.Release|x64.Build.0 = Release|Any CPU
-		{CF8BB87B-81B5-4DE7-9B9E-2CADCCDDC6E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF8BB87B-81B5-4DE7-9B9E-2CADCCDDC6E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF8BB87B-81B5-4DE7-9B9E-2CADCCDDC6E3}.Debug|x64.ActiveCfg = Debug|x64
-		{CF8BB87B-81B5-4DE7-9B9E-2CADCCDDC6E3}.Debug|x64.Build.0 = Debug|x64
-		{CF8BB87B-81B5-4DE7-9B9E-2CADCCDDC6E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF8BB87B-81B5-4DE7-9B9E-2CADCCDDC6E3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CF8BB87B-81B5-4DE7-9B9E-2CADCCDDC6E3}.Release|x64.ActiveCfg = Release|x64
-		{CF8BB87B-81B5-4DE7-9B9E-2CADCCDDC6E3}.Release|x64.Build.0 = Release|x64
-		{6A278C05-35E3-4415-B18F-D4A42888F33D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6A278C05-35E3-4415-B18F-D4A42888F33D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6A278C05-35E3-4415-B18F-D4A42888F33D}.Debug|x64.ActiveCfg = Debug|x64
-		{6A278C05-35E3-4415-B18F-D4A42888F33D}.Debug|x64.Build.0 = Debug|x64
-		{6A278C05-35E3-4415-B18F-D4A42888F33D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6A278C05-35E3-4415-B18F-D4A42888F33D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6A278C05-35E3-4415-B18F-D4A42888F33D}.Release|x64.ActiveCfg = Release|x64
-		{6A278C05-35E3-4415-B18F-D4A42888F33D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
